@@ -33,6 +33,16 @@ impl Tuple {
     fn magnitude(&self) -> f32 {
         ((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)).sqrt()
     }
+
+    fn normalize(&self) -> Self {
+        let magnitude = self.magnitude();
+        Tuple::new(
+            self.x / magnitude,
+            self.y / magnitude,
+            self.z / magnitude,
+            self.w / magnitude,
+        )
+    }
 }
 
 impl PartialEq for Tuple {
@@ -229,4 +239,24 @@ fn computing_the_magnitude_of_vector_1_2_3() {
 fn computing_the_magnitude_of_vector_neg_1_neg_2_neg_3() {
     let v = Tuple::new_vector(-1.0, -2.0, -3.0);
     assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
+}
+
+#[test]
+fn normalizing_vector_4_0_0_gives_1_0_0() {
+    let v = Tuple::new_vector(4.0, 0.0, 0.0);
+    assert_eq!(v.normalize(), Tuple::new_vector(1.0, 0.0, 0.0));
+}
+
+#[test]
+fn normalizing_vector_1_2_3() {
+    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    // vector(1/sqrt(14), 2/sqrt(14), 3/sqrt(14))
+    assert_eq!(v.normalize(), Tuple::new_vector(0.26726, 0.53452, 0.80178));
+}
+
+#[test]
+fn the_magnitude_of_a_normalized_vector() {
+    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    let norm = v.normalize();
+    assert!(f32_equal(norm.magnitude(), 1.0));
 }
