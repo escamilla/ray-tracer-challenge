@@ -15,11 +15,11 @@ impl Tuple {
     }
 
     fn new_point(x: f32, y: f32, z: f32) -> Self {
-        Tuple { x, y, z, w: 1.0 }
+        Tuple::new(x, y, z, 1.0)
     }
 
     fn new_vector(x: f32, y: f32, z: f32) -> Self {
-        Tuple { x, y, z, w: 0.0 }
+        Tuple::new(x, y, z, 0.0)
     }
 
     fn is_point(&self) -> bool {
@@ -28,6 +28,10 @@ impl Tuple {
 
     fn is_vector(&self) -> bool {
         self.w == 0.0
+    }
+
+    fn magnitude(&self) -> f32 {
+        ((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)).sqrt()
     }
 }
 
@@ -195,4 +199,34 @@ fn multiplying_a_tuple_by_a_fraction() {
 fn dividing_a_tuple_by_a_scalar() {
     let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
     assert_eq!(a / 2.0, Tuple::new(0.5, -1.0, 1.5, -2.0));
+}
+
+#[test]
+fn computing_the_magnitude_of_vector_1_0_0() {
+    let v = Tuple::new_vector(1.0, 0.0, 0.0);
+    assert_eq!(v.magnitude(), 1.0);
+}
+
+#[test]
+fn computing_the_magnitude_of_vector_0_1_0() {
+    let v = Tuple::new_vector(0.0, 1.0, 0.0);
+    assert_eq!(v.magnitude(), 1.0);
+}
+
+#[test]
+fn computing_the_magnitude_of_vector_0_0_1() {
+    let v = Tuple::new_vector(0.0, 0.0, 1.0);
+    assert_eq!(v.magnitude(), 1.0);
+}
+
+#[test]
+fn computing_the_magnitude_of_vector_1_2_3() {
+    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
+}
+
+#[test]
+fn computing_the_magnitude_of_vector_neg_1_neg_2_neg_3() {
+    let v = Tuple::new_vector(-1.0, -2.0, -3.0);
+    assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
 }
