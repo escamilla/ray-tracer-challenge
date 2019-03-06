@@ -2,39 +2,39 @@ use super::f32_equal;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone, Debug)]
-struct Tuple {
-    x: f32,
-    y: f32,
-    z: f32,
-    w: f32,
+pub struct Tuple {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32,
 }
 
 impl Tuple {
-    fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Tuple { x, y, z, w }
     }
 
-    fn point(x: f32, y: f32, z: f32) -> Self {
+    pub fn point(x: f32, y: f32, z: f32) -> Self {
         Tuple::new(x, y, z, 1.0)
     }
 
-    fn vector(x: f32, y: f32, z: f32) -> Self {
+    pub fn vector(x: f32, y: f32, z: f32) -> Self {
         Tuple::new(x, y, z, 0.0)
     }
 
-    fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         self.w == 1.0
     }
 
-    fn is_vector(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         self.w == 0.0
     }
 
-    fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f32 {
         ((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)).sqrt()
     }
 
-    fn normalize(&self) -> Self {
+    pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
         Tuple::new(
             self.x / magnitude,
@@ -44,11 +44,11 @@ impl Tuple {
         )
     }
 
-    fn dot(&self, other: Tuple) -> f32 {
+    pub fn dot(&self, other: Tuple) -> f32 {
         (self.x * other.x) + (self.y * other.y) + (self.z * other.z) + (self.w * other.w)
     }
 
-    fn cross(&self, other: Tuple) -> Tuple {
+    pub fn cross(&self, other: Tuple) -> Tuple {
         Tuple::vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
