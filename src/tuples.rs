@@ -1,5 +1,5 @@
 use super::f32_equal;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Neg, Sub};
 
 #[derive(Debug)]
 struct Tuple {
@@ -66,8 +66,16 @@ impl Sub for Tuple {
     }
 }
 
+impl Neg for Tuple {
+    type Output = Tuple;
+
+    fn neg(self) -> Self {
+        Tuple::new(-self.x, -self.y, -self.z, -self.w)
+    }
+}
+
 #[test]
-fn tuple_with_w_of_1_is_a_point() {
+fn a_tuple_with_w_equals_1_is_a_point() {
     let a = Tuple::new(4.3, -4.2, 3.1, 1.0);
     assert_eq!(a.x, 4.3);
     assert_eq!(a.y, -4.2);
@@ -78,7 +86,7 @@ fn tuple_with_w_of_1_is_a_point() {
 }
 
 #[test]
-fn tuple_with_w_of_0_is_a_vector() {
+fn a_tuple_with_w_equals_0_is_a_vector() {
     let a = Tuple::new(4.3, -4.2, 3.1, 0.0);
     assert_eq!(a.x, 4.3);
     assert_eq!(a.y, -4.2);
@@ -89,7 +97,7 @@ fn tuple_with_w_of_0_is_a_vector() {
 }
 
 #[test]
-fn point_function_creates_tuples_with_w_of_1() {
+fn point_function_creates_tuples_with_w_equals_1() {
     let p = Tuple::new_point(4.0, -4.0, 3.0);
     assert_eq!(p.w, 1.0);
     assert!(p.is_point());
@@ -97,7 +105,7 @@ fn point_function_creates_tuples_with_w_of_1() {
 }
 
 #[test]
-fn vector_function_creates_tuples_with_w_of_0() {
+fn vector_function_creates_tuples_with_w_equals_0() {
     let v = Tuple::new_vector(4.0, -4.0, 3.0);
     assert_eq!(v.w, 0.0);
     assert!(v.is_vector());
@@ -130,4 +138,17 @@ fn subtracting_two_vectors() {
     let v1 = Tuple::new_vector(3.0, 2.0, 1.0);
     let v2 = Tuple::new_vector(5.0, 6.0, 7.0);
     assert_eq!(v1 - v2, Tuple::new_vector(-2.0, -4.0, -6.0));
+}
+
+#[test]
+fn subtracting_a_vector_from_the_zero_vector() {
+    let zero = Tuple::new_vector(0.0, 0.0, 0.0);
+    let v = Tuple::new_vector(1.0, -2.0, 3.0);
+    assert_eq!(zero - v, Tuple::new_vector(-1.0, 2.0, -3.0));
+}
+
+#[test]
+fn negating_a_tuple() {
+    let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+    assert_eq!(-a, Tuple::new(-1.0, 2.0, -3.0, 4.0));
 }
