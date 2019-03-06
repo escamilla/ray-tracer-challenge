@@ -1,5 +1,5 @@
 use super::f32_equal;
-use std::ops::{Add, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug)]
 struct Tuple {
@@ -71,6 +71,32 @@ impl Neg for Tuple {
 
     fn neg(self) -> Self {
         Tuple::new(-self.x, -self.y, -self.z, -self.w)
+    }
+}
+
+impl Mul<f32> for Tuple {
+    type Output = Tuple;
+
+    fn mul(self, scalar: f32) -> Self {
+        Tuple::new(
+            self.x * scalar,
+            self.y * scalar,
+            self.z * scalar,
+            self.w * scalar,
+        )
+    }
+}
+
+impl Div<f32> for Tuple {
+    type Output = Tuple;
+
+    fn div(self, scalar: f32) -> Self {
+        Tuple::new(
+            self.x / scalar,
+            self.y / scalar,
+            self.z / scalar,
+            self.w / scalar,
+        )
     }
 }
 
@@ -151,4 +177,22 @@ fn subtracting_a_vector_from_the_zero_vector() {
 fn negating_a_tuple() {
     let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
     assert_eq!(-a, Tuple::new(-1.0, 2.0, -3.0, 4.0));
+}
+
+#[test]
+fn multiplying_a_tuple_by_a_scalar() {
+    let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+    assert_eq!(a * 3.5, Tuple::new(3.5, -7.0, 10.5, -14.0));
+}
+
+#[test]
+fn multiplying_a_tuple_by_a_fraction() {
+    let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+    assert_eq!(a * 0.5, Tuple::new(0.5, -1.0, 1.5, -2.0));
+}
+
+#[test]
+fn dividing_a_tuple_by_a_scalar() {
+    let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+    assert_eq!(a / 2.0, Tuple::new(0.5, -1.0, 1.5, -2.0));
 }
