@@ -1,7 +1,7 @@
 use super::f32_equal;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 struct Tuple {
     x: f32,
     y: f32,
@@ -14,11 +14,11 @@ impl Tuple {
         Tuple { x, y, z, w }
     }
 
-    fn new_point(x: f32, y: f32, z: f32) -> Self {
+    fn point(x: f32, y: f32, z: f32) -> Self {
         Tuple::new(x, y, z, 1.0)
     }
 
-    fn new_vector(x: f32, y: f32, z: f32) -> Self {
+    fn vector(x: f32, y: f32, z: f32) -> Self {
         Tuple::new(x, y, z, 0.0)
     }
 
@@ -41,6 +41,18 @@ impl Tuple {
             self.y / magnitude,
             self.z / magnitude,
             self.w / magnitude,
+        )
+    }
+
+    fn dot(&self, other: Tuple) -> f32 {
+        (self.x * other.x) + (self.y * other.y) + (self.z * other.z) + (self.w * other.w)
+    }
+
+    fn cross(&self, other: Tuple) -> Tuple {
+        Tuple::vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
         )
     }
 }
@@ -138,7 +150,7 @@ fn a_tuple_with_w_equals_0_is_a_vector() {
 
 #[test]
 fn point_function_creates_tuples_with_w_equals_1() {
-    let p = Tuple::new_point(4.0, -4.0, 3.0);
+    let p = Tuple::point(4.0, -4.0, 3.0);
     assert_eq!(p.w, 1.0);
     assert!(p.is_point());
     assert!(!p.is_vector());
@@ -146,7 +158,7 @@ fn point_function_creates_tuples_with_w_equals_1() {
 
 #[test]
 fn vector_function_creates_tuples_with_w_equals_0() {
-    let v = Tuple::new_vector(4.0, -4.0, 3.0);
+    let v = Tuple::vector(4.0, -4.0, 3.0);
     assert_eq!(v.w, 0.0);
     assert!(v.is_vector());
     assert!(!v.is_point());
@@ -161,30 +173,30 @@ fn adding_two_tuples() {
 
 #[test]
 fn subtracting_two_points() {
-    let p1 = Tuple::new_point(3.0, 2.0, 1.0);
-    let p2 = Tuple::new_point(5.0, 6.0, 7.0);
-    assert_eq!(p1 - p2, Tuple::new_vector(-2.0, -4.0, -6.0));
+    let p1 = Tuple::point(3.0, 2.0, 1.0);
+    let p2 = Tuple::point(5.0, 6.0, 7.0);
+    assert_eq!(p1 - p2, Tuple::vector(-2.0, -4.0, -6.0));
 }
 
 #[test]
 fn subtracting_a_vector_from_a_point() {
-    let p = Tuple::new_point(3., 2., 1.);
-    let v = Tuple::new_vector(5., 6., 7.);
-    assert_eq!(p - v, Tuple::new_point(-2.0, -4.0, -6.0));
+    let p = Tuple::point(3., 2., 1.);
+    let v = Tuple::vector(5., 6., 7.);
+    assert_eq!(p - v, Tuple::point(-2.0, -4.0, -6.0));
 }
 
 #[test]
 fn subtracting_two_vectors() {
-    let v1 = Tuple::new_vector(3.0, 2.0, 1.0);
-    let v2 = Tuple::new_vector(5.0, 6.0, 7.0);
-    assert_eq!(v1 - v2, Tuple::new_vector(-2.0, -4.0, -6.0));
+    let v1 = Tuple::vector(3.0, 2.0, 1.0);
+    let v2 = Tuple::vector(5.0, 6.0, 7.0);
+    assert_eq!(v1 - v2, Tuple::vector(-2.0, -4.0, -6.0));
 }
 
 #[test]
 fn subtracting_a_vector_from_the_zero_vector() {
-    let zero = Tuple::new_vector(0.0, 0.0, 0.0);
-    let v = Tuple::new_vector(1.0, -2.0, 3.0);
-    assert_eq!(zero - v, Tuple::new_vector(-1.0, 2.0, -3.0));
+    let zero = Tuple::vector(0.0, 0.0, 0.0);
+    let v = Tuple::vector(1.0, -2.0, 3.0);
+    assert_eq!(zero - v, Tuple::vector(-1.0, 2.0, -3.0));
 }
 
 #[test]
@@ -213,50 +225,65 @@ fn dividing_a_tuple_by_a_scalar() {
 
 #[test]
 fn computing_the_magnitude_of_vector_1_0_0() {
-    let v = Tuple::new_vector(1.0, 0.0, 0.0);
+    let v = Tuple::vector(1.0, 0.0, 0.0);
     assert_eq!(v.magnitude(), 1.0);
 }
 
 #[test]
 fn computing_the_magnitude_of_vector_0_1_0() {
-    let v = Tuple::new_vector(0.0, 1.0, 0.0);
+    let v = Tuple::vector(0.0, 1.0, 0.0);
     assert_eq!(v.magnitude(), 1.0);
 }
 
 #[test]
 fn computing_the_magnitude_of_vector_0_0_1() {
-    let v = Tuple::new_vector(0.0, 0.0, 1.0);
+    let v = Tuple::vector(0.0, 0.0, 1.0);
     assert_eq!(v.magnitude(), 1.0);
 }
 
 #[test]
 fn computing_the_magnitude_of_vector_1_2_3() {
-    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    let v = Tuple::vector(1.0, 2.0, 3.0);
     assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
 }
 
 #[test]
 fn computing_the_magnitude_of_vector_neg_1_neg_2_neg_3() {
-    let v = Tuple::new_vector(-1.0, -2.0, -3.0);
+    let v = Tuple::vector(-1.0, -2.0, -3.0);
     assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
 }
 
 #[test]
 fn normalizing_vector_4_0_0_gives_1_0_0() {
-    let v = Tuple::new_vector(4.0, 0.0, 0.0);
-    assert_eq!(v.normalize(), Tuple::new_vector(1.0, 0.0, 0.0));
+    let v = Tuple::vector(4.0, 0.0, 0.0);
+    assert_eq!(v.normalize(), Tuple::vector(1.0, 0.0, 0.0));
 }
 
 #[test]
 fn normalizing_vector_1_2_3() {
-    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    let v = Tuple::vector(1.0, 2.0, 3.0);
     // vector(1/sqrt(14), 2/sqrt(14), 3/sqrt(14))
-    assert_eq!(v.normalize(), Tuple::new_vector(0.26726, 0.53452, 0.80178));
+    assert_eq!(v.normalize(), Tuple::vector(0.26726, 0.53452, 0.80178));
 }
 
 #[test]
 fn the_magnitude_of_a_normalized_vector() {
-    let v = Tuple::new_vector(1.0, 2.0, 3.0);
+    let v = Tuple::vector(1.0, 2.0, 3.0);
     let norm = v.normalize();
     assert!(f32_equal(norm.magnitude(), 1.0));
+}
+
+#[test]
+fn the_dot_product_of_two_tuples() {
+    let a = Tuple::vector(1.0, 2.0, 3.0);
+    let b = Tuple::vector(2.0, 3.0, 4.0);
+    assert!(f32_equal(a.dot(b), 20.0));
+}
+
+#[test]
+fn the_cross_product_of_two_vectors() {
+    let a = Tuple::vector(1.0, 2.0, 3.0);
+    let b = Tuple::vector(2.0, 3.0, 4.0);
+    assert_eq!(a.cross(b), Tuple::vector(-1.0, 2.0, -1.0));
+    assert_eq!(b.cross(a), Tuple::vector(1.0, -2.0, 1.0));
 }
