@@ -31,7 +31,7 @@ impl Canvas {
         let mut ppm = String::new();
         ppm.push_str(format!("P3\n{} {}\n255\n", self.width, self.height).as_str());
         let mut values: Vec<i32> = Vec::new();
-        for (i, pixel) in self.pixels.iter().enumerate() {
+        for pixel in self.pixels.iter() {
             let scaled_color = *pixel * 255.0;
             let red = i32_clamp(scaled_color.red().round() as i32, 0, 255);
             let green = i32_clamp(scaled_color.green().round() as i32, 0, 255);
@@ -138,7 +138,7 @@ fn test_splitting_long_lines_in_ppm_files() {
 
 #[test]
 fn test_ppm_files_are_terminated_by_a_newline_character() {
-    let mut c = Canvas::new(5, 3);
+    let c = Canvas::new(5, 3);
     let ppm = c.to_ppm();
     assert!(ppm.ends_with('\n'));
 }
