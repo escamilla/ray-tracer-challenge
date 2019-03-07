@@ -3,9 +3,9 @@ use crate::tuples::Tuple;
 
 const PPM_LINE_LENGTH: u32 = 70;
 
-struct Canvas {
-    width: u32,
-    height: u32,
+pub struct Canvas {
+    pub width: u32,
+    pub height: u32,
     pixels: Vec<Tuple>,
 }
 
