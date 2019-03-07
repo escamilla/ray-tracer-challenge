@@ -1,3 +1,4 @@
+pub mod canvas;
 pub mod tuples;
 
 const EPSILON: f32 = 0.00001;
