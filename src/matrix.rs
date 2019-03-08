@@ -2,7 +2,7 @@ use crate::f32_equal;
 use crate::tuple::Tuple;
 use std::ops::Mul;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Matrix {
     pub rows: usize,
     pub cols: usize,
@@ -24,6 +24,14 @@ impl Matrix {
 
     pub fn value_at(&self, row: usize, col: usize) -> f32 {
         self.values[row * self.cols + col]
+    }
+
+    pub fn identity_matrix(size: usize) -> Self {
+        let mut m = Matrix::new(size, size);
+        for i in 0..size {
+            m.set_value(i, i, 1.0);
+        }
+        m
     }
 }
 
@@ -286,4 +294,32 @@ fn test_a_matrix_multiplied_by_a_tuple() {
     a.set_value(3, 3, 1.0);
     let b = Tuple::new(1.0, 2.0, 3.0, 1.0);
     assert_eq!(a * b, Tuple::new(18.0, 24.0, 33.0, 1.0));
+}
+
+#[test]
+fn test_multiplying_a_matrix_by_the_identity_matrix() {
+    let mut a = Matrix::new(4, 4);
+    a.set_value(0, 0, 0.0);
+    a.set_value(0, 1, 1.0);
+    a.set_value(0, 2, 2.0);
+    a.set_value(0, 3, 4.0);
+    a.set_value(1, 0, 1.0);
+    a.set_value(1, 1, 2.0);
+    a.set_value(1, 2, 4.0);
+    a.set_value(1, 3, 8.0);
+    a.set_value(2, 0, 2.0);
+    a.set_value(2, 1, 4.0);
+    a.set_value(2, 2, 8.0);
+    a.set_value(2, 3, 16.0);
+    a.set_value(3, 0, 4.0);
+    a.set_value(3, 1, 8.0);
+    a.set_value(3, 2, 16.0);
+    a.set_value(3, 3, 32.0);
+    assert_eq!(a.clone() * Matrix::identity_matrix(4), a);
+}
+
+#[test]
+fn test_multiplying_the_identity_matrix_by_a_tuple() {
+    let a = Tuple::new(1.0, 2.0, 3.0, 4.0);
+    assert_eq!(Matrix::identity_matrix(4) * a, a);
 }
