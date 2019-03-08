@@ -1,9 +1,11 @@
 use crate::f32_equal;
+use crate::tuple::Tuple;
+use std::ops::Mul;
 
 #[derive(Debug)]
 pub struct Matrix {
-    rows: usize,
-    cols: usize,
+    pub rows: usize,
+    pub cols: usize,
     values: Vec<f32>,
 }
 
@@ -17,11 +19,11 @@ impl Matrix {
     }
 
     pub fn set_value(&mut self, row: usize, col: usize, value: f32) {
-        self.values[row * self.rows + col] = value;
+        self.values[row * self.cols + col] = value;
     }
 
     pub fn value_at(&self, row: usize, col: usize) -> f32 {
-        self.values[row * self.rows + col]
+        self.values[row * self.cols + col]
     }
 }
 
@@ -34,6 +36,34 @@ impl PartialEq for Matrix {
                 .iter()
                 .zip(other.values.iter())
                 .all(|(a, b)| f32_equal(*a, *b))
+    }
+}
+
+impl Mul for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, other: Matrix) -> Self {
+        assert_eq!(self.cols, other.rows);
+        let mut result = Matrix::new(self.rows, other.cols);
+        for row in 0..self.rows {
+            for col in 0..other.cols {
+                let mut value = 0.0;
+                for i in 0..self.cols {
+                    value += self.value_at(row, i) * other.value_at(i, col);
+                }
+                result.set_value(row, col, value);
+            }
+        }
+        result
+    }
+}
+
+impl Mul<Tuple> for Matrix {
+    type Output = Tuple;
+
+    fn mul(self, tuple: Tuple) -> Tuple {
+        assert_eq!(self.cols, 4);
+        Tuple::from_matrix(self * tuple.to_matrix())
     }
 }
 
@@ -177,4 +207,83 @@ fn test_matrix_equality_with_different_matrices() {
     b.set_value(3, 2, 2.0);
     b.set_value(3, 3, 1.0);
     assert_ne!(a, b);
+}
+
+#[test]
+fn test_multiplying_two_matrices() {
+    let mut a = Matrix::new(4, 4);
+    a.set_value(0, 0, 1.0);
+    a.set_value(0, 1, 2.0);
+    a.set_value(0, 2, 3.0);
+    a.set_value(0, 3, 4.0);
+    a.set_value(1, 0, 5.0);
+    a.set_value(1, 1, 6.0);
+    a.set_value(1, 2, 7.0);
+    a.set_value(1, 3, 8.0);
+    a.set_value(2, 0, 9.0);
+    a.set_value(2, 1, 8.0);
+    a.set_value(2, 2, 7.0);
+    a.set_value(2, 3, 6.0);
+    a.set_value(3, 0, 5.0);
+    a.set_value(3, 1, 4.0);
+    a.set_value(3, 2, 3.0);
+    a.set_value(3, 3, 2.0);
+    let mut b = Matrix::new(4, 4);
+    b.set_value(0, 0, -2.0);
+    b.set_value(0, 1, 1.0);
+    b.set_value(0, 2, 2.0);
+    b.set_value(0, 3, 3.0);
+    b.set_value(1, 0, 3.0);
+    b.set_value(1, 1, 2.0);
+    b.set_value(1, 2, 1.0);
+    b.set_value(1, 3, -1.0);
+    b.set_value(2, 0, 4.0);
+    b.set_value(2, 1, 3.0);
+    b.set_value(2, 2, 6.0);
+    b.set_value(2, 3, 5.0);
+    b.set_value(3, 0, 1.0);
+    b.set_value(3, 1, 2.0);
+    b.set_value(3, 2, 7.0);
+    b.set_value(3, 3, 8.0);
+    let mut m = Matrix::new(4, 4);
+    m.set_value(0, 0, 20.0);
+    m.set_value(0, 1, 22.0);
+    m.set_value(0, 2, 50.0);
+    m.set_value(0, 3, 48.0);
+    m.set_value(1, 0, 44.0);
+    m.set_value(1, 1, 54.0);
+    m.set_value(1, 2, 114.0);
+    m.set_value(1, 3, 108.0);
+    m.set_value(2, 0, 40.0);
+    m.set_value(2, 1, 58.0);
+    m.set_value(2, 2, 110.0);
+    m.set_value(2, 3, 102.0);
+    m.set_value(3, 0, 16.0);
+    m.set_value(3, 1, 26.0);
+    m.set_value(3, 2, 46.0);
+    m.set_value(3, 3, 42.0);
+    assert_eq!(a * b, m);
+}
+
+#[test]
+fn test_a_matrix_multiplied_by_a_tuple() {
+    let mut a = Matrix::new(4, 4);
+    a.set_value(0, 0, 1.0);
+    a.set_value(0, 1, 2.0);
+    a.set_value(0, 2, 3.0);
+    a.set_value(0, 3, 4.0);
+    a.set_value(1, 0, 2.0);
+    a.set_value(1, 1, 4.0);
+    a.set_value(1, 2, 4.0);
+    a.set_value(1, 3, 2.0);
+    a.set_value(2, 0, 8.0);
+    a.set_value(2, 1, 6.0);
+    a.set_value(2, 2, 4.0);
+    a.set_value(2, 3, 1.0);
+    a.set_value(3, 0, 0.0);
+    a.set_value(3, 1, 0.0);
+    a.set_value(3, 2, 0.0);
+    a.set_value(3, 3, 1.0);
+    let b = Tuple::new(1.0, 2.0, 3.0, 1.0);
+    assert_eq!(a * b, Tuple::new(18.0, 24.0, 33.0, 1.0));
 }

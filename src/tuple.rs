@@ -1,4 +1,5 @@
 use super::f32_equal;
+use crate::matrix::Matrix;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone, Debug)]
@@ -70,6 +71,26 @@ impl Tuple {
 
     pub fn blue(&self) -> f32 {
         self.z
+    }
+
+    pub fn to_matrix(&self) -> Matrix {
+        let mut m = Matrix::new(4, 1);
+        m.set_value(0, 0, self.x);
+        m.set_value(1, 0, self.y);
+        m.set_value(2, 0, self.z);
+        m.set_value(3, 0, self.w);
+        m
+    }
+
+    pub fn from_matrix(m: Matrix) -> Self {
+        assert_eq!(m.rows, 4);
+        assert_eq!(m.cols, 1);
+        Tuple::new(
+            m.value_at(0, 0),
+            m.value_at(1, 0),
+            m.value_at(2, 0),
+            m.value_at(3, 0),
+        )
     }
 }
 
