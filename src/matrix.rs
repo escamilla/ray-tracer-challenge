@@ -33,6 +33,16 @@ impl Matrix {
         }
         m
     }
+
+    pub fn transpose(&self) -> Self {
+        let mut m = Matrix::new(self.rows, self.cols);
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                m.set_value(col, row, self.value_at(row, col));
+            }
+        }
+        m
+    }
 }
 
 impl PartialEq for Matrix {
@@ -322,4 +332,49 @@ fn test_multiplying_a_matrix_by_the_identity_matrix() {
 fn test_multiplying_the_identity_matrix_by_a_tuple() {
     let a = Tuple::new(1.0, 2.0, 3.0, 4.0);
     assert_eq!(Matrix::identity_matrix(4) * a, a);
+}
+
+#[test]
+fn test_transposing_a_matrix() {
+    let mut a = Matrix::new(4, 4);
+    a.set_value(0, 0, 0.0);
+    a.set_value(0, 1, 9.0);
+    a.set_value(0, 2, 3.0);
+    a.set_value(0, 3, 0.0);
+    a.set_value(1, 0, 9.0);
+    a.set_value(1, 1, 8.0);
+    a.set_value(1, 2, 0.0);
+    a.set_value(1, 3, 8.0);
+    a.set_value(2, 0, 1.0);
+    a.set_value(2, 1, 8.0);
+    a.set_value(2, 2, 5.0);
+    a.set_value(2, 3, 3.0);
+    a.set_value(3, 0, 0.0);
+    a.set_value(3, 1, 0.0);
+    a.set_value(3, 2, 5.0);
+    a.set_value(3, 3, 8.0);
+    let mut b = Matrix::new(4, 4);
+    b.set_value(0, 0, 0.0);
+    b.set_value(0, 1, 9.0);
+    b.set_value(0, 2, 1.0);
+    b.set_value(0, 3, 0.0);
+    b.set_value(1, 0, 9.0);
+    b.set_value(1, 1, 8.0);
+    b.set_value(1, 2, 8.0);
+    b.set_value(1, 3, 0.0);
+    b.set_value(2, 0, 3.0);
+    b.set_value(2, 1, 0.0);
+    b.set_value(2, 2, 5.0);
+    b.set_value(2, 3, 5.0);
+    b.set_value(3, 0, 0.0);
+    b.set_value(3, 1, 8.0);
+    b.set_value(3, 2, 3.0);
+    b.set_value(3, 3, 8.0);
+    assert_eq!(a.transpose(), b);
+}
+
+#[test]
+fn test_transposing_the_identity_matrix() {
+    let a = Matrix::identity_matrix(4);
+    assert_eq!(a.transpose(), a);
 }
