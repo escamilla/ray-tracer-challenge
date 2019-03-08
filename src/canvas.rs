@@ -1,16 +1,16 @@
 use crate::i32_clamp;
-use crate::tuples::Tuple;
+use crate::tuple::Tuple;
 
-const PPM_LINE_LENGTH: u32 = 70;
+const PPM_LINE_LENGTH: usize = 70;
 
 pub struct Canvas {
-    pub width: u32,
-    pub height: u32,
+    pub width: usize,
+    pub height: usize,
     pixels: Vec<Tuple>,
 }
 
 impl Canvas {
-    pub fn new(width: u32, height: u32) -> Canvas {
+    pub fn new(width: usize, height: usize) -> Canvas {
         let pixels = vec![Tuple::color(0.0, 0.0, 0.0); (width * height) as usize];
         Canvas {
             width,
@@ -19,12 +19,12 @@ impl Canvas {
         }
     }
 
-    pub fn write_pixel(&mut self, x: u32, y: u32, color: Tuple) {
-        self.pixels[((y * self.width) + x) as usize] = color;
+    pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
+        self.pixels[y * self.width + x] = color;
     }
 
-    pub fn pixel_at(&self, x: u32, y: u32) -> Tuple {
-        self.pixels[((y * self.width) + x) as usize]
+    pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
+        self.pixels[y * self.width + x]
     }
 
     pub fn to_ppm(&self) -> String {
@@ -43,7 +43,7 @@ impl Canvas {
         let mut line = String::new();
         for i in 0..values.len() {
             let value = format!("{}", values[i]);
-            if line.len() + 1 + value.len() >= (PPM_LINE_LENGTH as usize) {
+            if line.len() + 1 + value.len() >= PPM_LINE_LENGTH {
                 line.push('\n');
                 ppm.push_str(line.as_str());
                 line = String::new();
@@ -52,7 +52,7 @@ impl Canvas {
                 line.push(' ');
             }
             line.push_str(value.as_str());
-            if (i + 1) % ((self.width * 3) as usize) == 0 {
+            if (i + 1) % (self.width * 3) == 0 {
                 line.push('\n');
                 ppm.push_str(line.as_str());
                 line = String::new();

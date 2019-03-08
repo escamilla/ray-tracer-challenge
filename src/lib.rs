@@ -1,5 +1,6 @@
 pub mod canvas;
-pub mod tuples;
+pub mod matrix;
+pub mod tuple;
 
 const EPSILON: f32 = 0.00001;
 
