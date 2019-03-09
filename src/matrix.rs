@@ -23,18 +23,18 @@ impl Matrix {
         Matrix { rows, cols, values }
     }
 
-    pub fn set_value(&mut self, row: usize, col: usize, value: f32) {
+    pub fn set(&mut self, row: usize, col: usize, value: f32) {
         self.values[row * self.cols + col] = value;
     }
 
-    pub fn value_at(&self, row: usize, col: usize) -> f32 {
+    pub fn get(&self, row: usize, col: usize) -> f32 {
         self.values[row * self.cols + col]
     }
 
     pub fn identity_matrix(size: usize) -> Self {
         let mut m = Matrix::new(size, size);
         for i in 0..size {
-            m.set_value(i, i, 1.0);
+            m.set(i, i, 1.0);
         }
         m
     }
@@ -43,10 +43,45 @@ impl Matrix {
         let mut m = Matrix::new(self.rows, self.cols);
         for row in 0..self.rows {
             for col in 0..self.cols {
-                m.set_value(col, row, self.value_at(row, col));
+                m.set(col, row, self.get(row, col));
             }
         }
         m
+    }
+
+    pub fn determinant(&self) -> f32 {
+        assert_eq!(self.rows, 2);
+        assert_eq!(self.cols, 2);
+        ((self.get(0, 0) * self.get(1, 1)) - (self.get(1, 0) * self.get(0, 1)))
+    }
+
+    pub fn submatrix(&self, row: usize, col: usize) -> Self {
+        assert!(row < self.rows);
+        assert!(col < self.cols);
+        let mut m = Matrix::new(self.rows - 1, self.cols - 1);
+        let mut i = 0;
+        for r in 0..self.rows {
+            for c in 0..self.cols {
+                if r == row || c == col {
+                    continue;
+                }
+                m.values[i] = self.get(r, c);
+                i += 1;
+            }
+        }
+        m
+    }
+
+    pub fn minor(&self, row: usize, col: usize) -> f32 {
+        self.submatrix(row, col).determinant()
+    }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+        if row + col % 2 == 0 {
+            self.minor(row, col)
+        } else {
+            -self.minor(row, col)
+        }
     }
 }
 
@@ -72,9 +107,9 @@ impl Mul for Matrix {
             for col in 0..other.cols {
                 let mut value = 0.0;
                 for i in 0..self.cols {
-                    value += self.value_at(row, i) * other.value_at(i, col);
+                    value += self.get(row, i) * other.get(i, col);
                 }
-                result.set_value(row, col, value);
+                result.set(row, col, value);
             }
         }
         result
@@ -91,7 +126,7 @@ impl Mul<Tuple> for Matrix {
 }
 
 #[test]
-fn test_constructing_and_inspecting_a_4_x_4_matrix() {
+fn test_constructing_and_inspecting_a_4x4_matrix() {
     #[rustfmt::skip]
     let m: Matrix = Matrix::new_with_values(
         4, 4,
@@ -102,26 +137,26 @@ fn test_constructing_and_inspecting_a_4_x_4_matrix() {
             13.5, 14.5, 15.5, 16.5,
         ],
     );
-    assert_eq!(m.value_at(0, 0), 1.0);
-    assert_eq!(m.value_at(0, 3), 4.0);
-    assert_eq!(m.value_at(1, 0), 5.5);
-    assert_eq!(m.value_at(1, 2), 7.5);
-    assert_eq!(m.value_at(2, 2), 11.0);
-    assert_eq!(m.value_at(3, 0), 13.5);
-    assert_eq!(m.value_at(3, 2), 15.5);
+    assert_eq!(m.get(0, 0), 1.0);
+    assert_eq!(m.get(0, 3), 4.0);
+    assert_eq!(m.get(1, 0), 5.5);
+    assert_eq!(m.get(1, 2), 7.5);
+    assert_eq!(m.get(2, 2), 11.0);
+    assert_eq!(m.get(3, 0), 13.5);
+    assert_eq!(m.get(3, 2), 15.5);
 }
 
 #[test]
-fn a_2_x_2_matrix_ought_to_be_representable() {
+fn test_a_2x2_matrix_ought_to_be_representable() {
     let m = Matrix::new_with_values(2, 2, vec![-3.0, 5.0, 1.0, -2.0]);
-    assert_eq!(m.value_at(0, 0), -3.0);
-    assert_eq!(m.value_at(0, 1), 5.0);
-    assert_eq!(m.value_at(1, 0), 1.0);
-    assert_eq!(m.value_at(1, 1), -2.0);
+    assert_eq!(m.get(0, 0), -3.0);
+    assert_eq!(m.get(0, 1), 5.0);
+    assert_eq!(m.get(1, 0), 1.0);
+    assert_eq!(m.get(1, 1), -2.0);
 }
 
 #[test]
-fn a_3_x_3_matrix_ought_to_be_representable() {
+fn test_a_3x3_matrix_ought_to_be_representable() {
     #[rustfmt::skip]
     let m = Matrix::new_with_values(
         3, 3,
@@ -131,15 +166,15 @@ fn a_3_x_3_matrix_ought_to_be_representable() {
             0.0, 1.0, 1.0,
         ],
     );
-    assert_eq!(m.value_at(0, 0), -3.0);
-    assert_eq!(m.value_at(0, 1), 5.0);
-    assert_eq!(m.value_at(0, 2), 0.0);
-    assert_eq!(m.value_at(1, 0), 1.0);
-    assert_eq!(m.value_at(1, 1), -2.0);
-    assert_eq!(m.value_at(1, 2), -7.0);
-    assert_eq!(m.value_at(2, 0), 0.0);
-    assert_eq!(m.value_at(2, 1), 1.0);
-    assert_eq!(m.value_at(2, 2), 1.0);
+    assert_eq!(m.get(0, 0), -3.0);
+    assert_eq!(m.get(0, 1), 5.0);
+    assert_eq!(m.get(0, 2), 0.0);
+    assert_eq!(m.get(1, 0), 1.0);
+    assert_eq!(m.get(1, 1), -2.0);
+    assert_eq!(m.get(1, 2), -7.0);
+    assert_eq!(m.get(2, 0), 0.0);
+    assert_eq!(m.get(2, 1), 1.0);
+    assert_eq!(m.get(2, 2), 1.0);
 }
 
 #[test]
@@ -170,12 +205,10 @@ fn test_matrix_equality_with_identical_matrices() {
 #[test]
 fn test_matrix_equality_with_different_matrices() {
     let a = Matrix::new_with_values(
-        4, 4,
+        4,
+        4,
         vec![
-            1.0, 2.0, 3.0, 4.0,
-            5.0, 6.0, 7.0, 8.0,
-            9.0, 8.0, 7.0, 6.0,
-            5.0, 4.0, 3.0, 2.0,
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0,
         ],
     );
     #[rustfmt::skip]
@@ -292,4 +325,86 @@ fn test_transposing_a_matrix() {
 fn test_transposing_the_identity_matrix() {
     let a = Matrix::identity_matrix(4);
     assert_eq!(a.transpose(), a);
+}
+
+#[test]
+fn test_calculating_the_determinant_of_a_2x2_matrix() {
+    let a = Matrix::new_with_values(2, 2, vec![1.0, 5.0, -3.0, 2.0]);
+    assert_eq!(a.determinant(), 17.0);
+}
+
+#[test]
+fn test_a_submatrix_of_a_3x3_matrix_is_a_2x2_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        3, 3,
+        vec![
+            1.0, 5.0, 0.0,
+            -3.0, 2.0, 7.0,
+            0.0, 6.0, 3.0,
+        ],
+    );
+    assert_eq!(
+        a.submatrix(0, 2),
+        Matrix::new_with_values(2, 2, vec![-3.0, 2.0, 0.0, 6.0])
+    )
+}
+
+#[test]
+fn test_a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        4, 4,
+        vec![
+            -6.0, 1.0, 1.0, 6.0,
+            -8.0, 5.0, 8.0, 6.0,
+            -1.0, 0.0, 8.0, 2.0,
+            -7.0, 1.0, -1.0, 1.0,
+        ],
+    );
+    #[rustfmt::skip]
+    assert_eq!(
+        a.submatrix(2, 1),
+        Matrix::new_with_values(
+            3, 3,
+            vec![
+                -6.0, 1.0, 6.0,
+                -8.0, 8.0, 6.0,
+                -7.0, -1.0, 1.0,
+            ],
+        ),
+    );
+}
+
+#[test]
+fn test_calculating_a_minor_of_a_3x3_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        3, 3,
+        vec![
+            3.0, 5.0, 0.0,
+            2.0, -1.0, -7.0,
+            6.0, -1.0, 5.0,
+        ],
+    );
+    let b = a.submatrix(1, 0);
+    assert_eq!(b.determinant(), 25.0);
+    assert_eq!(a.minor(1, 0), 25.0);
+}
+
+#[test]
+fn test_calculating_a_cofactor_of_a_3x3_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        3, 3,
+        vec![
+            3.0, 5.0, 0.0,
+            2.0, -1.0, -7.0,
+            6.0, -1.0, 5.0,
+        ],
+    );
+    assert_eq!(a.minor(0, 0), -12.0);
+    assert_eq!(a.cofactor(0, 0), -12.0);
+    assert_eq!(a.minor(1, 0), 25.0);
+    assert_eq!(a.cofactor(1, 0), -25.0);
 }
