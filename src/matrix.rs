@@ -50,9 +50,17 @@ impl Matrix {
     }
 
     pub fn determinant(&self) -> f32 {
-        assert_eq!(self.rows, 2);
-        assert_eq!(self.cols, 2);
-        ((self.get(0, 0) * self.get(1, 1)) - (self.get(1, 0) * self.get(0, 1)))
+        assert_eq!(self.rows, self.cols);
+        assert!(self.rows >= 2);
+        if self.rows == 2 && self.cols == 2 {
+            (self.get(0, 0) * self.get(1, 1)) - (self.get(1, 0) * self.get(0, 1))
+        } else {
+            let mut sum = 0.0;
+            for col in 0..self.cols {
+                sum += self.get(0, col) * self.cofactor(0, col);
+            }
+            sum
+        }
     }
 
     pub fn submatrix(&self, row: usize, col: usize) -> Self {
@@ -407,4 +415,40 @@ fn test_calculating_a_cofactor_of_a_3x3_matrix() {
     assert_eq!(a.cofactor(0, 0), -12.0);
     assert_eq!(a.minor(1, 0), 25.0);
     assert_eq!(a.cofactor(1, 0), -25.0);
+}
+
+#[test]
+fn test_calculating_the_determinant_of_a_3x3_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        3, 3,
+        vec![
+            1.0, 2.0, 6.0,
+            -5.0, 8.0, -4.0,
+            2.0, 6.0, 4.0,
+        ],
+    );
+    assert_eq!(a.cofactor(0, 0), 56.0);
+    assert_eq!(a.cofactor(0, 1), 12.0);
+    assert_eq!(a.cofactor(0, 2), -46.0);
+    assert_eq!(a.determinant(), -196.0);
+}
+
+#[test]
+fn test_calculating_the_determinant_of_a_4x4_matrix() {
+    #[rustfmt::skip]
+    let a = Matrix::new_with_values(
+        4, 4,
+        vec![
+            -2.0, -8.0, 3.0, 5.0,
+            -3.0, 1.0, 7.0, 3.0,
+            1.0, 2.0, -9.0, 6.0,
+            -6.0, 7.0, 7.0, -9.0,
+        ],
+    );
+    assert_eq!(a.cofactor(0, 0), 690.0);
+    assert_eq!(a.cofactor(0, 1), 447.0);
+    assert_eq!(a.cofactor(0, 2), 210.0);
+    assert_eq!(a.cofactor(0, 3), 51.0);
+    assert_eq!(a.determinant(), -4071.0);
 }
