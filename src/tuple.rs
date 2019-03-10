@@ -85,12 +85,7 @@ impl Tuple {
     pub fn from_matrix(m: Matrix) -> Self {
         assert_eq!(m.rows, 4);
         assert_eq!(m.cols, 1);
-        Tuple::new(
-            m.get(0, 0),
-            m.get(1, 0),
-            m.get(2, 0),
-            m.get(3, 0),
-        )
+        Tuple::new(m.get(0, 0), m.get(1, 0), m.get(2, 0), m.get(3, 0))
     }
 }
 
