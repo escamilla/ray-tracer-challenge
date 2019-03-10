@@ -247,6 +247,22 @@ impl Matrix4 {
             [0.0, 0.0, 0.0, 1.0],
         ])
     }
+
+    pub fn shearing(
+        x_y: f32,
+        x_z: f32,
+        y_x: f32,
+        y_z: f32,
+        z_x: f32,
+        z_y: f32,
+    ) -> Self {
+        Matrix4::from_rows([
+            [1.0, x_y, x_z, 0.0],
+            [y_x, 1.0, y_z, 0.0],
+            [z_x, z_y, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
 }
 
 impl PartialEq for Matrix4 {
@@ -754,4 +770,46 @@ fn test_rotating_a_point_around_the_z_axis() {
         Tuple::point(-FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0)
     );
     assert_eq!(full_quarter * p, Tuple::point(-1.0, 0.0, 0.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_x_in_proportion_to_y() {
+    let transform = Matrix4::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(5.0, 3.0, 4.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_x_in_proportion_to_z() {
+    let transform = Matrix4::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(6.0, 3.0, 4.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_y_in_proportion_to_x() {
+    let transform = Matrix4::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(2.0, 5.0, 4.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_y_in_proportion_to_z() {
+    let transform = Matrix4::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(2.0, 7.0, 4.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_z_in_proportion_to_x() {
+    let transform = Matrix4::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(2.0, 3.0, 6.0));
+}
+
+#[test]
+fn test_a_shearing_transformation_moves_z_in_proportion_to_y() {
+    let transform = Matrix4::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(2.0, 3.0, 7.0));
 }
