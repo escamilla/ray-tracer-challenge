@@ -55,7 +55,11 @@ fn main() {
         println!("projectile.position: {:?}", projectile.position);
         let x = projectile.position.x.round() as i32;
         let y = (canvas.height as i32) - (projectile.position.y.round() as i32);
-        if x < 0 || x > ((canvas.width - 1) as i32) || y < 0 || y > ((canvas.height - 1) as i32) {
+        if x < 0
+            || x > ((canvas.width - 1) as i32)
+            || y < 0
+            || y > ((canvas.height - 1) as i32)
+        {
             break;
         }
         canvas.write_pixel(x as usize, y as usize, color);
@@ -66,12 +70,16 @@ fn main() {
     let display = path.display();
 
     let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why.description()),
+        Err(why) => {
+            panic!("couldn't create {}: {}", display, why.description())
+        }
         Ok(file) => file,
     };
 
     match file.write_all(canvas.to_ppm().as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why.description()),
+        Err(why) => {
+            panic!("couldn't write to {}: {}", display, why.description())
+        }
         Ok(_) => println!("successfully wrote to {}", display),
     }
 }

@@ -35,7 +35,11 @@ impl Tuple {
     }
 
     pub fn magnitude(&self) -> f32 {
-        ((self.x * self.x) + (self.y * self.y) + (self.z * self.z) + (self.w * self.w)).sqrt()
+        ((self.x * self.x)
+            + (self.y * self.y)
+            + (self.z * self.z)
+            + (self.w * self.w))
+            .sqrt()
     }
 
     pub fn normalize(&self) -> Self {
@@ -49,7 +53,10 @@ impl Tuple {
     }
 
     pub fn dot(&self, other: Tuple) -> f32 {
-        (self.x * other.x) + (self.y * other.y) + (self.z * other.z) + (self.w * other.w)
+        (self.x * other.x)
+            + (self.y * other.y)
+            + (self.z * other.z)
+            + (self.w * other.w)
     }
 
     pub fn cross(&self, other: Tuple) -> Tuple {
