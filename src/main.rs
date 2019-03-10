@@ -37,8 +37,8 @@ fn tick(environment: &Environment, projectile: Projectile) -> Projectile {
 
 fn main() {
     let mut projectile = Projectile::new(
-        Tuple::point(0.0, 0.0, 0.0),
-        Tuple::vector(1.0, 3.0, 0.0).normalize() * 10.0,
+        Tuple::point(0.0, 1.0, 0.0),
+        Tuple::vector(1.0, 1.8, 0.0).normalize() * 11.25,
     );
     let environment = Environment::new(
         Tuple::vector(0.0, -0.1, 0.0),
@@ -47,7 +47,7 @@ fn main() {
     let mut ticks = 0;
 
     let mut canvas = Canvas::new(900, 550);
-    let color = Tuple::color(0.0, 1.0, 1.0);
+    let color = Tuple::color(1.0, 1.0, 1.0);
 
     loop {
         projectile = tick(&environment, projectile);
