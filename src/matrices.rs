@@ -1,5 +1,6 @@
 use crate::f32_equal;
 use crate::tuple::Tuple;
+use std::f32::consts::{FRAC_1_SQRT_2, FRAC_PI_2, FRAC_PI_4};
 use std::ops::Mul;
 
 #[derive(Copy, Clone, Debug)]
@@ -199,6 +200,51 @@ impl Matrix4 {
             [values[4], values[5], values[6], values[7]],
             [values[8], values[9], values[10], values[11]],
             [values[12], values[13], values[14], values[15]],
+        ])
+    }
+
+    pub fn translation(x: f32, y: f32, z: f32) -> Self {
+        Matrix4::from_rows([
+            [1.0, 0.0, 0.0, x],
+            [0.0, 1.0, 0.0, y],
+            [0.0, 0.0, 1.0, z],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn scaling(x: f32, y: f32, z: f32) -> Self {
+        Matrix4::from_rows([
+            [x, 0.0, 0.0, 0.0],
+            [0.0, y, 0.0, 0.0],
+            [0.0, 0.0, z, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_x(radians: f32) -> Self {
+        Matrix4::from_rows([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, radians.cos(), -radians.sin(), 0.0],
+            [0.0, radians.sin(), radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_y(radians: f32) -> Self {
+        Matrix4::from_rows([
+            [radians.cos(), 0.0, radians.sin(), 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [-radians.sin(), 0.0, radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_z(radians: f32) -> Self {
+        Matrix4::from_rows([
+            [radians.cos(), -radians.sin(), 0.0, 0.0],
+            [radians.sin(), radians.cos(), 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
         ])
     }
 }
@@ -613,4 +659,99 @@ fn test_multiplying_a_product_by_its_inverse() {
     ]);
     let c = a * b;
     assert_eq!(c * b.inverse(), a);
+}
+
+#[test]
+fn test_multiplying_by_a_translation_matrix() {
+    let transform = Matrix4::translation(5.0, -3.0, 2.0);
+    let p = Tuple::point(-3.0, 4.0, 5.0);
+    assert_eq!(transform * p, Tuple::point(2.0, 1.0, 7.0));
+}
+
+#[test]
+fn test_multiplying_by_the_inverse_of_a_translation_matrix() {
+    let transform = Matrix4::translation(5.0, -3.0, 2.0);
+    let inv = transform.inverse();
+    let p = Tuple::point(-3.0, 4.0, 5.0);
+    assert_eq!(inv * p, Tuple::point(-8.0, 7.0, 3.0));
+}
+
+#[test]
+fn test_translation_does_not_affect_vectors() {
+    let transform = Matrix4::translation(5.0, -3.0, 2.0);
+    let v = Tuple::vector(-3.0, 4.0, 5.0);
+    assert_eq!(transform * v, v);
+}
+
+#[test]
+fn test_a_scaling_matrix_applied_to_a_point() {
+    let transform = Matrix4::scaling(2.0, 3.0, 4.0);
+    let p = Tuple::point(-4.0, 6.0, 8.0);
+    assert_eq!(transform * p, Tuple::point(-8.0, 18.0, 32.0));
+}
+
+#[test]
+fn test_a_scaling_matrix_applied_to_a_vector() {
+    let transform = Matrix4::scaling(2.0, 3.0, 4.0);
+    let v = Tuple::vector(-4.0, 6.0, 8.0);
+    assert_eq!(transform * v, Tuple::vector(-8.0, 18.0, 32.0));
+}
+
+#[test]
+fn test_multiplying_by_the_inverse_of_a_scaling_matrix() {
+    let transform = Matrix4::scaling(2.0, 3.0, 4.0);
+    let inv = transform.inverse();
+    let v = Tuple::vector(-4.0, 6.0, 8.0);
+    assert_eq!(inv * v, Tuple::vector(-2.0, 2.0, 2.0));
+}
+
+#[test]
+fn test_reflection_is_scaling_by_a_negative_value() {
+    let transform = Matrix4::scaling(-1.0, 1.0, 1.0);
+    let p = Tuple::point(2.0, 3.0, 4.0);
+    assert_eq!(transform * p, Tuple::point(-2.0, 3.0, 4.0));
+}
+
+#[test]
+fn test_rotating_a_point_around_the_x_axis() {
+    let p = Tuple::point(0.0, 1.0, 0.0);
+    let half_quarter = Matrix4::rotation_x(FRAC_PI_4);
+    let full_quarter = Matrix4::rotation_x(FRAC_PI_2);
+    assert_eq!(
+        half_quarter * p,
+        Tuple::point(0.0, FRAC_1_SQRT_2, FRAC_1_SQRT_2)
+    );
+    assert_eq!(full_quarter * p, Tuple::point(0.0, 0.0, 1.0));
+}
+
+#[test]
+fn test_the_inverse_of_an_x_rotation_rotates_in_the_opposite_direction() {
+    let p = Tuple::point(0.0, 1.0, 0.0);
+    let half_quarter = Matrix4::rotation_x(FRAC_PI_4);
+    let inv = half_quarter.inverse();
+    assert_eq!(inv * p, Tuple::point(0.0, FRAC_1_SQRT_2, -FRAC_1_SQRT_2));
+}
+
+#[test]
+fn test_rotating_a_point_around_the_y_axis() {
+    let p = Tuple::point(0.0, 0.0, 1.0);
+    let half_quarter = Matrix4::rotation_y(FRAC_PI_4);
+    let full_quarter = Matrix4::rotation_y(FRAC_PI_2);
+    assert_eq!(
+        half_quarter * p,
+        Tuple::point(FRAC_1_SQRT_2, 0.0, FRAC_1_SQRT_2)
+    );
+    assert_eq!(full_quarter * p, Tuple::point(1.0, 0.0, 0.0));
+}
+
+#[test]
+fn test_rotating_a_point_around_the_z_axis() {
+    let p = Tuple::point(0.0, 1.0, 0.0);
+    let half_quarter = Matrix4::rotation_z(FRAC_PI_4);
+    let full_quarter = Matrix4::rotation_z(FRAC_PI_2);
+    assert_eq!(
+        half_quarter * p,
+        Tuple::point(-FRAC_1_SQRT_2, FRAC_1_SQRT_2, 0.0)
+    );
+    assert_eq!(full_quarter * p, Tuple::point(-1.0, 0.0, 0.0));
 }
