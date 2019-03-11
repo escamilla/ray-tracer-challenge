@@ -1,7 +1,7 @@
 extern crate ray_tracer_challenge;
 
 use ray_tracer_challenge::canvas::Canvas;
-use ray_tracer_challenge::matrices::Matrix4;
+use ray_tracer_challenge::matrix::Matrix4;
 use ray_tracer_challenge::tuple::Tuple;
 use std::error::Error;
 use std::f32::consts::{FRAC_PI_6, PI};
