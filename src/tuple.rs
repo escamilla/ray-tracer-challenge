@@ -1,4 +1,5 @@
 use super::f32_equal;
+use std::f32::consts::SQRT_2;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Copy, Clone, Debug)]
@@ -77,6 +78,10 @@ impl Tuple {
 
     pub fn blue(&self) -> f32 {
         self.z
+    }
+
+    pub fn reflect(&self, normal: Tuple) -> Self {
+        *self - (normal * 2.0 * self.dot(normal))
     }
 }
 
@@ -357,4 +362,20 @@ fn test_multiplying_colors() {
     let c1 = Tuple::color(1.0, 0.2, 0.4);
     let c2 = Tuple::color(0.9, 1.0, 0.1);
     assert_eq!(c1 * c2, Tuple::color(0.9, 0.2, 0.04));
+}
+
+#[test]
+fn test_reflecting_a_vector_approaching_at_45_degrees() {
+    let v = Tuple::vector(1.0, -1.0, 0.0);
+    let n = Tuple::vector(0.0, 1.0, 0.0);
+    let r = v.reflect(n);
+    assert_eq!(r, Tuple::vector(1.0, 1.0, 0.0));
+}
+
+#[test]
+fn test_reflecting_a_vector_off_a_slanted_surface() {
+    let v = Tuple::vector(0.0, -1.0, 0.0);
+    let n = Tuple::vector(SQRT_2 / 2.0, SQRT_2 / 2.0, 0.0);
+    let r = v.reflect(n);
+    assert_eq!(r, Tuple::vector(1.0, 0.0, 0.0));
 }
