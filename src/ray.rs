@@ -1,4 +1,3 @@
-use super::intersection::Intersection;
 use super::tuple::Tuple;
 
 #[derive(Copy, Clone, Debug)]
