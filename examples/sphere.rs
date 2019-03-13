@@ -1,6 +1,7 @@
 extern crate ray_tracer_challenge;
 
 use ray_tracer_challenge::canvas::Canvas;
+use ray_tracer_challenge::color::Color;
 use ray_tracer_challenge::intersection::find_hit;
 use ray_tracer_challenge::light::{lighting, PointLight};
 use ray_tracer_challenge::material::Material;
@@ -21,10 +22,10 @@ fn main() {
 
     let mut sphere = Sphere::new();
     sphere.material = Material::new();
-    sphere.material.color = Tuple::color(1.0, 0.0, 1.0);
+    sphere.material.color = Color::new(1.0, 0.0, 1.0);
 
     let light_position = Tuple::point(-10.0, 10.0, -10.0);
-    let light_color = Tuple::color(1.0, 1.0, 1.0);
+    let light_color = Color::white();
     let light = PointLight::new(light_position, light_color);
 
     let ray_origin = Tuple::point(0.0, 0.0, -wall_size);

@@ -1,3 +1,4 @@
+use crate::color::Color;
 use crate::light::lighting;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
@@ -44,7 +45,7 @@ impl Intersection {
         self.inside = Some(inside);
     }
 
-    pub fn shade_hit(&self, world: &World) -> Tuple {
+    pub fn shade_hit(&self, world: &World) -> Color {
         lighting(
             self.object.material,
             world.light.unwrap(),
@@ -199,5 +200,5 @@ fn test_shading_an_intersection() {
     let mut i = find_hit(shape.intersect(r)).unwrap();
     i.prepare_hit(r);
     let c = i.shade_hit(&w);
-    assert_eq!(c, Tuple::color(0.38066, 0.47583, 0.2855));
+    assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
 }

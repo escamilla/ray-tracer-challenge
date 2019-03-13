@@ -1,3 +1,4 @@
+use crate::color::Color;
 use crate::intersection::{find_hit, Intersection};
 use crate::light::PointLight;
 use crate::matrix::Matrix4;
@@ -19,13 +20,11 @@ impl World {
     }
 
     pub fn default() -> Self {
-        let light = PointLight::new(
-            Tuple::point(-10.0, 10.0, -10.0),
-            Tuple::color(1.0, 1.0, 1.0),
-        );
+        let light =
+            PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
 
         let mut s1 = Sphere::new();
-        s1.material.color = Tuple::color(0.8, 1.0, 0.6);
+        s1.material.color = Color::new(0.8, 1.0, 0.6);
         s1.material.diffuse = 0.7;
         s1.material.specular = 0.2;
 
@@ -33,8 +32,8 @@ impl World {
         s2.transform = Matrix4::scaling(0.5, 0.5, 0.5);
 
         World {
-            objects: vec![s1, s2],
             light: Some(light),
+            objects: vec![s1, s2],
         }
     }
 
@@ -47,7 +46,7 @@ impl World {
         intersections
     }
 
-    pub fn color_at(&self, ray: Ray) -> Tuple {
+    pub fn color_at(&self, ray: Ray) -> Color {
         let intersections = self.intersect(ray);
         let hit = find_hit(intersections);
         match hit {
@@ -55,7 +54,7 @@ impl World {
                 intersection.prepare_hit(ray);
                 intersection.shade_hit(self)
             }
-            None => Tuple::color(0.0, 0.0, 0.0),
+            None => Color::black(),
         }
     }
 }
@@ -69,12 +68,10 @@ fn test_creating_a_world() {
 
 #[test]
 fn test_the_default_world() {
-    let light = PointLight::new(
-        Tuple::point(-10.0, 10.0, -10.0),
-        Tuple::color(1.0, 1.0, 1.0),
-    );
+    let light =
+        PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
     let mut s1 = Sphere::new();
-    s1.material.color = Tuple::color(0.8, 1.0, 0.6);
+    s1.material.color = Color::new(0.8, 1.0, 0.6);
     s1.material.diffuse = 0.7;
     s1.material.specular = 0.2;
     let mut s2 = Sphere::new();
@@ -105,7 +102,7 @@ fn test_the_color_when_a_ray_misses() {
     let r =
         Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 1.0, 0.0));
     let c = w.color_at(r);
-    assert_eq!(c, Tuple::color(0.0, 0.0, 0.0));
+    assert_eq!(c, Color::black());
 }
 
 #[test]
@@ -114,7 +111,7 @@ fn test_the_color_when_a_ray_hits() {
     let r =
         Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
     let c = w.color_at(r);
-    assert_eq!(c, Tuple::color(0.38066, 0.47583, 0.2855));
+    assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
 }
 
 #[test]

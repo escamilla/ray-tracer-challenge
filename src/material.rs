@@ -1,4 +1,4 @@
-use crate::tuple::Tuple;
+use crate::color::Color;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Material {
@@ -6,7 +6,7 @@ pub struct Material {
     pub diffuse: f32,
     pub specular: f32,
     pub shininess: f32,
-    pub color: Tuple,
+    pub color: Color,
 }
 
 impl Material {
@@ -16,7 +16,7 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
-            color: Tuple::color(1.0, 1.0, 1.0),
+            color: Color::white(),
         }
     }
 }

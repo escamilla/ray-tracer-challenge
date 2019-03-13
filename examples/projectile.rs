@@ -1,6 +1,7 @@
 extern crate ray_tracer_challenge;
 
 use ray_tracer_challenge::canvas::Canvas;
+use ray_tracer_challenge::color::Color;
 use ray_tracer_challenge::tuple::Tuple;
 use std::error::Error;
 use std::fs::File;
@@ -47,7 +48,7 @@ fn main() {
     let mut ticks = 0;
 
     let mut canvas = Canvas::new(900, 550);
-    let color = Tuple::color(1.0, 1.0, 1.0);
+    let color = Color::white();
 
     loop {
         projectile = tick(&environment, projectile);

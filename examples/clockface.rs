@@ -1,6 +1,7 @@
 extern crate ray_tracer_challenge;
 
 use ray_tracer_challenge::canvas::Canvas;
+use ray_tracer_challenge::color::Color;
 use ray_tracer_challenge::matrix::Matrix4;
 use ray_tracer_challenge::tuple::Tuple;
 use std::error::Error;
@@ -12,7 +13,7 @@ use std::path::Path;
 /// Draws a simple clock face using matrix transformations.
 fn main() {
     let mut canvas = Canvas::new(500, 500);
-    let color = Tuple::color(1.0, 1.0, 1.0);
+    let color = Color::white();
 
     // Start at 12 o'clock
     let mut hour_point = Tuple::point(0.0, 1.0, 0.0);
