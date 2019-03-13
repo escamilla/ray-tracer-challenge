@@ -26,9 +26,9 @@ impl Sphere {
     pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let transformed_ray = ray.transform(self.transform.inverse());
         let sphere_to_ray = transformed_ray.origin - self.origin;
-        let a = transformed_ray.direction.dot(transformed_ray.direction);
-        let b = 2.0 * transformed_ray.direction.dot(sphere_to_ray);
-        let c = sphere_to_ray.dot(sphere_to_ray) - 1.0;
+        let a = transformed_ray.direction.dot(&transformed_ray.direction);
+        let b = 2.0 * transformed_ray.direction.dot(&sphere_to_ray);
+        let c = sphere_to_ray.dot(&sphere_to_ray) - 1.0;
         let discriminant = (b * b) - (4.0 * a * c);
         if discriminant < 0.0 {
             vec![]

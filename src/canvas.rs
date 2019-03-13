@@ -1,5 +1,5 @@
+use crate::clamp_i32;
 use crate::color::Color;
-use crate::i32_clamp;
 
 const PPM_LINE_LENGTH: usize = 70;
 
@@ -35,9 +35,9 @@ impl Canvas {
         let mut values: Vec<i32> = Vec::new();
         for pixel in self.pixels.iter() {
             let scaled_color = *pixel * 255.0;
-            let red = i32_clamp(scaled_color.red.round() as i32, 0, 255);
-            let green = i32_clamp(scaled_color.green.round() as i32, 0, 255);
-            let blue = i32_clamp(scaled_color.blue.round() as i32, 0, 255);
+            let red = clamp_i32(scaled_color.red.round() as i32, 0, 255);
+            let green = clamp_i32(scaled_color.green.round() as i32, 0, 255);
+            let blue = clamp_i32(scaled_color.blue.round() as i32, 0, 255);
             values.push(red);
             values.push(green);
             values.push(blue);

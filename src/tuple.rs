@@ -1,4 +1,4 @@
-use crate::f32_equal;
+use crate::equal_f32;
 use std::f32::consts::SQRT_2;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
@@ -31,14 +31,13 @@ impl Tuple {
         self.w == 0.0
     }
 
+    /// Gets the distance represented by the vector.
     pub fn magnitude(&self) -> f32 {
-        ((self.x * self.x)
-            + (self.y * self.y)
-            + (self.z * self.z)
-            + (self.w * self.w))
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2) + self.w.powi(2))
             .sqrt()
     }
 
+    /// Converts the vector into a unit vector.
     pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
         Tuple::new(
@@ -49,14 +48,23 @@ impl Tuple {
         )
     }
 
-    pub fn dot(&self, other: Tuple) -> f32 {
+    /// Computes the dot product of the vectors. The dot product takes
+    /// two vectors and returns a scalar value. The *smaller* the dot
+    /// product, the *larger* the angle between the two vectors. A dot
+    /// product of 1 means that the two vectors are identical, and a
+    /// dot product of -1 means that they point in opposite directions.
+    /// If the two vectors are unit vectors, the dot product is
+    /// actually the cosine of the angle between them.
+    pub fn dot(&self, other: &Tuple) -> f32 {
         (self.x * other.x)
             + (self.y * other.y)
             + (self.z * other.z)
             + (self.w * other.w)
     }
 
-    pub fn cross(&self, other: Tuple) -> Tuple {
+    /// Returns a new vector that is perpendicular to both of the
+    /// original vectors.
+    pub fn cross(&self, other: &Tuple) -> Tuple {
         Tuple::vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
@@ -64,17 +72,17 @@ impl Tuple {
         )
     }
 
-    pub fn reflect(&self, normal: Tuple) -> Self {
-        *self - (normal * 2.0 * self.dot(normal))
+    pub fn reflect(&self, normal: &Tuple) -> Self {
+        *self - (*normal * 2.0 * self.dot(normal))
     }
 }
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Tuple) -> bool {
-        f32_equal(self.x, other.x)
-            && f32_equal(self.y, other.y)
-            && f32_equal(self.z, other.z)
-            && f32_equal(self.w, other.w)
+        equal_f32(self.x, other.x)
+            && equal_f32(self.y, other.y)
+            && equal_f32(self.z, other.z)
+            && equal_f32(self.w, other.w)
     }
 }
 
@@ -269,13 +277,13 @@ fn test_computing_the_magnitude_of_vector_0_0_1() {
 #[test]
 fn test_computing_the_magnitude_of_vector_1_2_3() {
     let v = Tuple::vector(1.0, 2.0, 3.0);
-    assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
+    assert!(equal_f32(v.magnitude(), (14.0 as f32).sqrt()));
 }
 
 #[test]
 fn test_computing_the_magnitude_of_vector_neg_1_neg_2_neg_3() {
     let v = Tuple::vector(-1.0, -2.0, -3.0);
-    assert!(f32_equal(v.magnitude(), (14.0 as f32).sqrt()));
+    assert!(equal_f32(v.magnitude(), (14.0 as f32).sqrt()));
 }
 
 #[test]
@@ -295,29 +303,29 @@ fn test_normalizing_vector_1_2_3() {
 fn test_the_magnitude_of_a_normalized_vector() {
     let v = Tuple::vector(1.0, 2.0, 3.0);
     let norm = v.normalize();
-    assert!(f32_equal(norm.magnitude(), 1.0));
+    assert!(equal_f32(norm.magnitude(), 1.0));
 }
 
 #[test]
 fn test_the_dot_product_of_two_tuples() {
     let a = Tuple::vector(1.0, 2.0, 3.0);
     let b = Tuple::vector(2.0, 3.0, 4.0);
-    assert!(f32_equal(a.dot(b), 20.0));
+    assert!(equal_f32(a.dot(&b), 20.0));
 }
 
 #[test]
 fn test_the_cross_product_of_two_vectors() {
     let a = Tuple::vector(1.0, 2.0, 3.0);
     let b = Tuple::vector(2.0, 3.0, 4.0);
-    assert_eq!(a.cross(b), Tuple::vector(-1.0, 2.0, -1.0));
-    assert_eq!(b.cross(a), Tuple::vector(1.0, -2.0, 1.0));
+    assert_eq!(a.cross(&b), Tuple::vector(-1.0, 2.0, -1.0));
+    assert_eq!(b.cross(&a), Tuple::vector(1.0, -2.0, 1.0));
 }
 
 #[test]
 fn test_reflecting_a_vector_approaching_at_45_degrees() {
     let v = Tuple::vector(1.0, -1.0, 0.0);
     let n = Tuple::vector(0.0, 1.0, 0.0);
-    let r = v.reflect(n);
+    let r = v.reflect(&n);
     assert_eq!(r, Tuple::vector(1.0, 1.0, 0.0));
 }
 
@@ -325,6 +333,6 @@ fn test_reflecting_a_vector_approaching_at_45_degrees() {
 fn test_reflecting_a_vector_off_a_slanted_surface() {
     let v = Tuple::vector(0.0, -1.0, 0.0);
     let n = Tuple::vector(SQRT_2 / 2.0, SQRT_2 / 2.0, 0.0);
-    let r = v.reflect(n);
+    let r = v.reflect(&n);
     assert_eq!(r, Tuple::vector(1.0, 0.0, 0.0));
 }

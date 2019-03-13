@@ -1,4 +1,4 @@
-use crate::f32_equal;
+use crate::equal_f32;
 use std::ops::{Add, Mul, Sub};
 
 #[derive(Copy, Clone, Debug)]
@@ -24,9 +24,9 @@ impl Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Color) -> bool {
-        f32_equal(self.red, other.red)
-            && f32_equal(self.green, other.green)
-            && f32_equal(self.blue, other.blue)
+        equal_f32(self.red, other.red)
+            && equal_f32(self.green, other.green)
+            && equal_f32(self.blue, other.blue)
     }
 }
 

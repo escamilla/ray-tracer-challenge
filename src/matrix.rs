@@ -1,4 +1,4 @@
-use crate::f32_equal;
+use crate::equal_f32;
 use crate::tuple::Tuple;
 use std::f32::consts::{FRAC_1_SQRT_2, FRAC_PI_2, FRAC_PI_4};
 use std::ops::Mul;
@@ -33,7 +33,7 @@ impl PartialEq for Matrix2 {
     fn eq(&self, other: &Matrix2) -> bool {
         for row in 0..2 {
             for col in 0..2 {
-                if !f32_equal(self.rows[row][col], other.rows[row][col]) {
+                if !equal_f32(self.rows[row][col], other.rows[row][col]) {
                     return false;
                 }
             }
@@ -89,7 +89,7 @@ impl PartialEq for Matrix3 {
     fn eq(&self, other: &Matrix3) -> bool {
         for row in 0..3 {
             for col in 0..3 {
-                if !f32_equal(self.rows[row][col], other.rows[row][col]) {
+                if !equal_f32(self.rows[row][col], other.rows[row][col]) {
                     return false;
                 }
             }
@@ -183,7 +183,7 @@ impl Matrix4 {
     }
 
     pub fn is_invertible(&self) -> bool {
-        !f32_equal(self.determinant(), 0.0)
+        !equal_f32(self.determinant(), 0.0)
     }
 
     pub fn inverse(&self) -> Matrix4 {
@@ -269,7 +269,7 @@ impl PartialEq for Matrix4 {
     fn eq(&self, other: &Matrix4) -> bool {
         for row in 0..4 {
             for col in 0..4 {
-                if !f32_equal(self.rows[row][col], other.rows[row][col]) {
+                if !equal_f32(self.rows[row][col], other.rows[row][col]) {
                     return false;
                 }
             }
@@ -607,9 +607,9 @@ fn test_calculating_the_inverse_of_a_matrix() {
     let b = a.inverse();
     assert_eq!(a.determinant(), 532.0);
     assert_eq!(a.cofactor(2, 3), -160.0);
-    assert!(f32_equal(b.rows[3][2], -160.0 / 532.0));
+    assert!(equal_f32(b.rows[3][2], -160.0 / 532.0));
     assert_eq!(a.cofactor(3, 2), 105.0);
-    assert!(f32_equal(b.rows[2][3], 105.0 / 532.0));
+    assert!(equal_f32(b.rows[2][3], 105.0 / 532.0));
     assert_eq!(
         b,
         Matrix4::from_rows([

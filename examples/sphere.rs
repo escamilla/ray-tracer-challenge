@@ -4,7 +4,6 @@ use ray_tracer_challenge::canvas::Canvas;
 use ray_tracer_challenge::color::Color;
 use ray_tracer_challenge::intersection::find_hit;
 use ray_tracer_challenge::light::{lighting, PointLight};
-use ray_tracer_challenge::material::Material;
 use ray_tracer_challenge::ray::Ray;
 use ray_tracer_challenge::sphere::Sphere;
 use ray_tracer_challenge::tuple::Tuple;
@@ -21,7 +20,6 @@ fn main() {
     let mut canvas = Canvas::new(canvas_size, canvas_size);
 
     let mut sphere = Sphere::new();
-    sphere.material = Material::new();
     sphere.material.color = Color::new(1.0, 0.0, 1.0);
 
     let light_position = Tuple::point(-10.0, 10.0, -10.0);
