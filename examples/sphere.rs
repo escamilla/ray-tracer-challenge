@@ -1,6 +1,9 @@
 extern crate ray_tracer_challenge;
 
 use ray_tracer_challenge::canvas::Canvas;
+use ray_tracer_challenge::intersection::find_hit;
+use ray_tracer_challenge::light::{lighting, PointLight};
+use ray_tracer_challenge::material::Material;
 use ray_tracer_challenge::ray::Ray;
 use ray_tracer_challenge::sphere::Sphere;
 use ray_tracer_challenge::tuple::Tuple;
@@ -11,14 +14,19 @@ use std::path::Path;
 
 fn main() {
     let canvas_size: usize = 500;
-    let wall_size = 10.0;
+    let wall_size = 5.0;
     let half_wall_size = wall_size / 2.0;
     let pixel_size = wall_size / (canvas_size as f32);
-
     let mut canvas = Canvas::new(canvas_size, canvas_size);
-    let red = Tuple::color(1.0, 0.0, 0.0);
 
-    let sphere = Sphere::new();
+    let mut sphere = Sphere::new();
+    sphere.material = Material::new();
+    sphere.material.color = Tuple::color(1.0, 0.0, 1.0);
+
+    let light_position = Tuple::point(-10.0, 10.0, -10.0);
+    let light_color = Tuple::color(1.0, 1.0, 1.0);
+    let light = PointLight::new(light_position, light_color);
+
     let ray_origin = Tuple::point(0.0, 0.0, -wall_size);
 
     for y in 0..canvas.height {
@@ -32,7 +40,18 @@ fn main() {
             let ray = Ray::new(ray_origin, ray_direction);
             let xs = sphere.intersect(ray);
             if !xs.is_empty() {
-                canvas.write_pixel(x, y, red);
+                let hit = find_hit(xs).unwrap();
+                let point = ray.position(hit.t);
+                let normal_vector = hit.object.normal_at(point);
+                let eye_vector = -ray.direction;
+                let color = lighting(
+                    hit.object.material,
+                    light,
+                    point,
+                    eye_vector,
+                    normal_vector,
+                );
+                canvas.write_pixel(x, y, color);
             }
         }
     }

@@ -1,4 +1,4 @@
-use super::f32_equal;
+use crate::f32_equal;
 use std::f32::consts::SQRT_2;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 

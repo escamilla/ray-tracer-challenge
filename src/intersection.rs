@@ -1,6 +1,6 @@
-use super::ray::Ray;
-use super::sphere::Sphere;
-use super::tuple::Tuple;
+use crate::ray::Ray;
+use crate::sphere::Sphere;
+use crate::tuple::Tuple;
 use std::cmp::Ordering;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -16,7 +16,7 @@ impl Intersection {
 }
 
 impl Ord for Intersection {
-    fn cmp(&self, other: &Self) -> Ordering {
+    fn cmp(&self, other: &Intersection) -> Ordering {
         if self.t < other.t {
             Ordering::Less
         } else if self.t > other.t {

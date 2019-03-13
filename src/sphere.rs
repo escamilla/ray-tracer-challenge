@@ -1,7 +1,8 @@
-use super::intersection::Intersection;
-use super::matrix::Matrix4;
-use super::ray::Ray;
-use super::tuple::Tuple;
+use crate::intersection::Intersection;
+use crate::material::Material;
+use crate::matrix::Matrix4;
+use crate::ray::Ray;
+use crate::tuple::Tuple;
 use std::f32::consts::{PI, SQRT_2};
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -9,6 +10,7 @@ pub struct Sphere {
     pub origin: Tuple,
     pub radius: f32,
     pub transform: Matrix4,
+    pub material: Material,
 }
 
 impl Sphere {
@@ -17,6 +19,7 @@ impl Sphere {
             origin: Tuple::point(0.0, 0.0, 0.0),
             radius: 1.0,
             transform: Matrix4::identity(),
+            material: Material::new(),
         }
     }
 
@@ -195,4 +198,20 @@ fn test_computing_the_normal_on_a_transformed_sphere() {
     s.transform = m;
     let n = s.normal_at(Tuple::point(0.0, SQRT_2 / 2.0, -SQRT_2 / 2.0));
     assert_eq!(n, Tuple::vector(0.0, 0.97014, -0.24254));
+}
+
+#[test]
+fn test_a_sphere_has_a_default_material() {
+    let s = Sphere::new();
+    let m = s.material;
+    assert_eq!(m, Material::new());
+}
+
+#[test]
+fn test_a_sphere_may_be_assigned_a_material() {
+    let mut s = Sphere::new();
+    let mut m = Material::new();
+    m.ambient = 1.0;
+    s.material = m;
+    assert_eq!(s.material, m);
 }
