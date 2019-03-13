@@ -1,17 +1,57 @@
+use crate::light::lighting;
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::Tuple;
+use crate::world::World;
 use std::cmp::Ordering;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Intersection {
     pub t: f32,
     pub object: Sphere,
+    pub point: Option<Tuple>,
+    pub eye_vector: Option<Tuple>,
+    pub normal_vector: Option<Tuple>,
+    pub inside: Option<bool>,
 }
 
 impl Intersection {
     pub fn new(t: f32, object: Sphere) -> Self {
-        Intersection { t, object }
+        Intersection {
+            t,
+            object,
+            point: None,
+            eye_vector: None,
+            normal_vector: None,
+            inside: None,
+        }
+    }
+
+    pub fn prepare_hit(&mut self, ray: Ray) {
+        let point = ray.position(self.t);
+        let eye_vector = -ray.direction;
+        let mut normal_vector = self.object.normal_at(point);
+        let inside;
+        if normal_vector.dot(eye_vector) < 0.0 {
+            inside = true;
+            normal_vector = -normal_vector;
+        } else {
+            inside = false;
+        }
+        self.point = Some(point);
+        self.eye_vector = Some(eye_vector);
+        self.normal_vector = Some(normal_vector);
+        self.inside = Some(inside);
+    }
+
+    pub fn shade_hit(&self, world: &World) -> Tuple {
+        lighting(
+            self.object.material,
+            world.light.unwrap(),
+            self.point.unwrap(),
+            self.eye_vector.unwrap(),
+            self.normal_vector.unwrap(),
+        )
     }
 }
 
@@ -112,4 +152,52 @@ fn test_the_hit_is_always_the_lowest_nonnegative_intersection() {
     let i = find_hit(xs);
     assert!(i.is_some());
     assert_eq!(i.unwrap(), i4);
+}
+
+#[test]
+fn test_precomputing_the_state_of_an_intersection() {
+    let r =
+        Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+    let shape = Sphere::new();
+    let mut i = find_hit(shape.intersect(r)).unwrap();
+    i.prepare_hit(r);
+    assert_eq!(i.object, i.object);
+    assert_eq!(i.point, Some(Tuple::point(0.0, 0.0, -1.0)));
+    assert_eq!(i.eye_vector, Some(Tuple::vector(0.0, 0.0, -1.0)));
+    assert_eq!(i.normal_vector, Some(Tuple::vector(0.0, 0.0, -1.0)));
+}
+
+#[test]
+fn test_the_hit_when_an_intersection_occurs_on_the_outside() {
+    let r =
+        Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+    let shape = Sphere::new();
+    let mut i = find_hit(shape.intersect(r)).unwrap();
+    i.prepare_hit(r);
+    assert_eq!(i.inside, Some(false));
+}
+
+#[test]
+fn test_the_hit_when_an_intersection_occurs_on_the_inside() {
+    let r = Ray::new(Tuple::point(0.0, 0.0, 0.0), Tuple::vector(0.0, 0.0, 1.0));
+    let shape = Sphere::new();
+    let mut i = find_hit(shape.intersect(r)).unwrap();
+    i.prepare_hit(r);
+    assert_eq!(i.point, Some(Tuple::point(0.0, 0.0, 1.0)));
+    assert_eq!(i.eye_vector, Some(Tuple::vector(0.0, 0.0, -1.0)));
+    assert_eq!(i.inside, Some(true));
+    // normal would have been (0.0, 0.0, 1.0) but is inverted
+    assert_eq!(i.normal_vector, Some(Tuple::vector(0.0, 0.0, -1.0)));
+}
+
+#[test]
+fn test_shading_an_intersection() {
+    let w = World::default();
+    let r =
+        Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+    let shape = w.objects[0];
+    let mut i = find_hit(shape.intersect(r)).unwrap();
+    i.prepare_hit(r);
+    let c = i.shade_hit(&w);
+    assert_eq!(c, Tuple::color(0.38066, 0.47583, 0.2855));
 }

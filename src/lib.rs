@@ -6,6 +6,7 @@ pub mod matrix;
 pub mod ray;
 pub mod sphere;
 pub mod tuple;
+pub mod world;
 
 const EPSILON: f32 = 0.00001;
 
