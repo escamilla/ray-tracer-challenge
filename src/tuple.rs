@@ -55,7 +55,7 @@ impl Tuple {
     /// dot product of -1 means that they point in opposite directions.
     /// If the two vectors are unit vectors, the dot product is
     /// actually the cosine of the angle between them.
-    pub fn dot(&self, other: &Tuple) -> f32 {
+    pub fn dot(&self, other: Tuple) -> f32 {
         (self.x * other.x)
             + (self.y * other.y)
             + (self.z * other.z)
@@ -64,7 +64,7 @@ impl Tuple {
 
     /// Returns a new vector that is perpendicular to both of the
     /// original vectors.
-    pub fn cross(&self, other: &Tuple) -> Tuple {
+    pub fn cross(&self, other: Tuple) -> Tuple {
         Tuple::vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
@@ -72,8 +72,8 @@ impl Tuple {
         )
     }
 
-    pub fn reflect(&self, normal: &Tuple) -> Tuple {
-        *self - (*normal * 2.0 * self.dot(normal))
+    pub fn reflect(&self, normal: Tuple) -> Tuple {
+        *self - (normal * 2.0 * self.dot(normal))
     }
 }
 
@@ -310,22 +310,22 @@ fn test_the_magnitude_of_a_normalized_vector() {
 fn test_the_dot_product_of_two_tuples() {
     let a = Tuple::vector(1.0, 2.0, 3.0);
     let b = Tuple::vector(2.0, 3.0, 4.0);
-    assert!(equal_f32(a.dot(&b), 20.0));
+    assert!(equal_f32(a.dot(b), 20.0));
 }
 
 #[test]
 fn test_the_cross_product_of_two_vectors() {
     let a = Tuple::vector(1.0, 2.0, 3.0);
     let b = Tuple::vector(2.0, 3.0, 4.0);
-    assert_eq!(a.cross(&b), Tuple::vector(-1.0, 2.0, -1.0));
-    assert_eq!(b.cross(&a), Tuple::vector(1.0, -2.0, 1.0));
+    assert_eq!(a.cross(b), Tuple::vector(-1.0, 2.0, -1.0));
+    assert_eq!(b.cross(a), Tuple::vector(1.0, -2.0, 1.0));
 }
 
 #[test]
 fn test_reflecting_a_vector_approaching_at_45_degrees() {
     let v = Tuple::vector(1.0, -1.0, 0.0);
     let n = Tuple::vector(0.0, 1.0, 0.0);
-    let r = v.reflect(&n);
+    let r = v.reflect(n);
     assert_eq!(r, Tuple::vector(1.0, 1.0, 0.0));
 }
 
@@ -333,6 +333,6 @@ fn test_reflecting_a_vector_approaching_at_45_degrees() {
 fn test_reflecting_a_vector_off_a_slanted_surface() {
     let v = Tuple::vector(0.0, -1.0, 0.0);
     let n = Tuple::vector(SQRT_2 / 2.0, SQRT_2 / 2.0, 0.0);
-    let r = v.reflect(&n);
+    let r = v.reflect(n);
     assert_eq!(r, Tuple::vector(1.0, 0.0, 0.0));
 }

@@ -37,7 +37,7 @@ pub fn lighting(
 
     // The value light_dot_normal represents the cosine of the angle between the light vector and the normal vector.
     // A negative number means the light is on the other side of the surface.
-    let light_dot_normal = light_vector.dot(&normal_vector);
+    let light_dot_normal = light_vector.dot(normal_vector);
 
     let diffuse;
     let specular;
@@ -50,8 +50,8 @@ pub fn lighting(
 
         // The value reflect_dot_eye represents the cosine of the angle between the reflection vector and the eye vector.
         // A negative number means the light reflects away from the eye.
-        let reflection_vector = (-light_vector).reflect(&normal_vector);
-        let reflection_dot_eye = reflection_vector.dot(&eye_vector);
+        let reflection_vector = (-light_vector).reflect(normal_vector);
+        let reflection_dot_eye = reflection_vector.dot(eye_vector);
 
         if reflection_dot_eye <= 0.0 {
             specular = Color::black();

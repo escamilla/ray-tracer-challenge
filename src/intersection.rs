@@ -33,7 +33,7 @@ impl Intersection {
         let eye_vector = -ray.direction;
         let mut normal_vector = self.object.normal_at(point);
         let inside;
-        if normal_vector.dot(&eye_vector) < 0.0 {
+        if normal_vector.dot(eye_vector) < 0.0 {
             inside = true;
             normal_vector = -normal_vector;
         } else {
