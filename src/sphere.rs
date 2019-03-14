@@ -14,7 +14,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new() -> Self {
+    pub fn new() -> Sphere {
         Sphere {
             origin: Tuple::point(0.0, 0.0, 0.0),
             radius: 1.0,

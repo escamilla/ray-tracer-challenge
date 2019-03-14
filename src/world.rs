@@ -12,14 +12,14 @@ pub struct World {
 }
 
 impl World {
-    pub fn new() -> Self {
+    pub fn new() -> World {
         World {
             light: None,
             objects: vec![],
         }
     }
 
-    pub fn default() -> Self {
+    pub fn default() -> World {
         let light =
             PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
 

@@ -10,7 +10,7 @@ pub struct Material {
 }
 
 impl Material {
-    pub fn new() -> Self {
+    pub fn new() -> Material {
         Material {
             ambient: 0.1,
             diffuse: 0.9,

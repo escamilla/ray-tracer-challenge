@@ -17,7 +17,7 @@ pub struct Intersection {
 }
 
 impl Intersection {
-    pub fn new(t: f32, object: Sphere) -> Self {
+    pub fn new(t: f32, object: Sphere) -> Intersection {
         Intersection {
             t,
             object,
@@ -69,7 +69,7 @@ impl Ord for Intersection {
 }
 
 impl PartialOrd for Intersection {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Intersection) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }

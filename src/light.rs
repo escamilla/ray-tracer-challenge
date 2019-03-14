@@ -10,7 +10,7 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn new(position: Tuple, intensity: Color) -> Self {
+    pub fn new(position: Tuple, intensity: Color) -> PointLight {
         assert!(position.is_point());
         PointLight {
             position,

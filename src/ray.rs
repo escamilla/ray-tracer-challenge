@@ -8,7 +8,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Tuple, direction: Tuple) -> Self {
+    pub fn new(origin: Tuple, direction: Tuple) -> Ray {
         Ray { origin, direction }
     }
 
@@ -16,7 +16,7 @@ impl Ray {
         self.origin + (self.direction * t)
     }
 
-    pub fn transform(&self, matrix: Matrix4) -> Self {
+    pub fn transform(&self, matrix: Matrix4) -> Ray {
         Ray::new(matrix * self.origin, matrix * self.direction)
     }
 }
