@@ -19,7 +19,7 @@ pub struct Matrix4 {
 }
 
 impl Matrix2 {
-    pub fn from_rows(rows: [[f32; 2]; 2]) -> Self {
+    pub fn from_rows(rows: [[f32; 2]; 2]) -> Matrix2 {
         Matrix2 { rows }
     }
 
@@ -43,7 +43,7 @@ impl PartialEq for Matrix2 {
 }
 
 impl Matrix3 {
-    pub fn from_rows(rows: [[f32; 3]; 3]) -> Self {
+    pub fn from_rows(rows: [[f32; 3]; 3]) -> Matrix3 {
         Matrix3 { rows }
     }
 
@@ -99,11 +99,11 @@ impl PartialEq for Matrix3 {
 }
 
 impl Matrix4 {
-    pub fn from_rows(rows: [[f32; 4]; 4]) -> Self {
+    pub fn from_rows(rows: [[f32; 4]; 4]) -> Matrix4 {
         Matrix4 { rows }
     }
 
-    pub fn identity() -> Self {
+    pub fn identity() -> Matrix4 {
         Matrix4::from_rows([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
@@ -112,7 +112,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn transpose(&self) -> Self {
+    /// Returns a new matrix where the rowss of the original matrix are
+    /// turned into columns and the columns into rows.
+    pub fn transpose(&self) -> Matrix4 {
         Matrix4::from_rows([
             [
                 self.rows[0][0],
@@ -141,6 +143,7 @@ impl Matrix4 {
         ])
     }
 
+    /// Returns a new matrix by removing the specified row and column.
     pub fn submatrix(&self, row: usize, col: usize) -> Matrix3 {
         assert!(row < 4);
         assert!(col < 4);
@@ -162,15 +165,17 @@ impl Matrix4 {
         }
     }
 
+    /// Computes the determinant of the submatrix at the given row and column.
     pub fn minor(&self, row: usize, col: usize) -> f32 {
         self.submatrix(row, col).determinant()
     }
 
     pub fn cofactor(&self, row: usize, col: usize) -> f32 {
+        let minor = self.minor(row, col);
         if (row + col) % 2 == 0 {
-            self.minor(row, col)
+            minor
         } else {
-            -self.minor(row, col)
+            -minor
         }
     }
 
@@ -186,6 +191,8 @@ impl Matrix4 {
         !equal_f32(self.determinant(), 0.0)
     }
 
+    /// Returns the inverse of the matrix, which reverses the effects
+    /// of multiplying by the original matrix.
     pub fn inverse(&self) -> Matrix4 {
         let det = self.determinant();
         let mut values = Vec::with_capacity(16);
@@ -203,7 +210,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn translation(x: f32, y: f32, z: f32) -> Self {
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// moves each component of the tuple by the given values.
+    pub fn translation(x: f32, y: f32, z: f32) -> Matrix4 {
         Matrix4::from_rows([
             [1.0, 0.0, 0.0, x],
             [0.0, 1.0, 0.0, y],
@@ -212,7 +221,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn scaling(x: f32, y: f32, z: f32) -> Self {
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// scales each component of the tuple by the given values.
+    pub fn scaling(x: f32, y: f32, z: f32) -> Matrix4 {
         Matrix4::from_rows([
             [x, 0.0, 0.0, 0.0],
             [0.0, y, 0.0, 0.0],
@@ -221,7 +232,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn rotation_x(radians: f32) -> Self {
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// rotates the tuple around the x-axis.
+    pub fn rotation_x(radians: f32) -> Matrix4 {
         Matrix4::from_rows([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, radians.cos(), -radians.sin(), 0.0],
@@ -230,7 +243,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn rotation_y(radians: f32) -> Self {
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// rotates the tuple around the y-axis.
+    pub fn rotation_y(radians: f32) -> Matrix4 {
         Matrix4::from_rows([
             [radians.cos(), 0.0, radians.sin(), 0.0],
             [0.0, 1.0, 0.0, 0.0],
@@ -239,7 +254,9 @@ impl Matrix4 {
         ])
     }
 
-    pub fn rotation_z(radians: f32) -> Self {
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// rotates the tuple around the z-axis.
+    pub fn rotation_z(radians: f32) -> Matrix4 {
         Matrix4::from_rows([
             [radians.cos(), -radians.sin(), 0.0, 0.0],
             [radians.sin(), radians.cos(), 0.0, 0.0],
@@ -248,6 +265,9 @@ impl Matrix4 {
         ])
     }
 
+    /// Returns a transformation matrix that, when applied to a tuple,
+    /// changes each component of the table in proportion to the other
+    /// two components.
     pub fn shearing(
         x_y: f32,
         x_z: f32,
@@ -255,7 +275,7 @@ impl Matrix4 {
         y_z: f32,
         z_x: f32,
         z_y: f32,
-    ) -> Self {
+    ) -> Matrix4 {
         Matrix4::from_rows([
             [1.0, x_y, x_z, 0.0],
             [y_x, 1.0, y_z, 0.0],
@@ -281,7 +301,7 @@ impl PartialEq for Matrix4 {
 impl Mul for Matrix4 {
     type Output = Matrix4;
 
-    fn mul(self, other: Matrix4) -> Self {
+    fn mul(self, other: Matrix4) -> Matrix4 {
         let mut values = Vec::with_capacity(16);
         for row in 0..4 {
             for col in 0..4 {

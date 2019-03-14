@@ -10,7 +10,7 @@ pub struct Canvas {
 }
 
 impl Canvas {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new(width: usize, height: usize) -> Canvas {
         let pixels = vec![Color::black(); width * height];
         Canvas {
             width,

@@ -19,18 +19,18 @@ struct Environment {
 }
 
 impl Projectile {
-    pub fn new(position: Tuple, velocity: Tuple) -> Self {
+    pub fn new(position: Tuple, velocity: Tuple) -> Projectile {
         Projectile { position, velocity }
     }
 }
 
 impl Environment {
-    pub fn new(gravity: Tuple, wind: Tuple) -> Self {
+    pub fn new(gravity: Tuple, wind: Tuple) -> Environment {
         Environment { gravity, wind }
     }
 }
 
-fn tick(environment: &Environment, projectile: Projectile) -> Projectile {
+fn tick(environment: &Environment, projectile: &Projectile) -> Projectile {
     let position = projectile.position + projectile.velocity;
     let velocity = projectile.velocity + environment.gravity + environment.wind;
     Projectile { position, velocity }
@@ -51,7 +51,7 @@ fn main() {
     let color = Color::white();
 
     loop {
-        projectile = tick(&environment, projectile);
+        projectile = tick(&environment, &projectile);
         ticks += 1;
         println!("projectile.position: {:?}", projectile.position);
         let x = projectile.position.x.round() as i32;

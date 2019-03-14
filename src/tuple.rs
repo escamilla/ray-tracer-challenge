@@ -11,15 +11,15 @@ pub struct Tuple {
 }
 
 impl Tuple {
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Tuple {
         Tuple { x, y, z, w }
     }
 
-    pub fn point(x: f32, y: f32, z: f32) -> Self {
+    pub fn point(x: f32, y: f32, z: f32) -> Tuple {
         Tuple::new(x, y, z, 1.0)
     }
 
-    pub fn vector(x: f32, y: f32, z: f32) -> Self {
+    pub fn vector(x: f32, y: f32, z: f32) -> Tuple {
         Tuple::new(x, y, z, 0.0)
     }
 
@@ -38,7 +38,7 @@ impl Tuple {
     }
 
     /// Converts the vector into a unit vector.
-    pub fn normalize(&self) -> Self {
+    pub fn normalize(&self) -> Tuple {
         let magnitude = self.magnitude();
         Tuple::new(
             self.x / magnitude,
@@ -72,7 +72,7 @@ impl Tuple {
         )
     }
 
-    pub fn reflect(&self, normal: &Tuple) -> Self {
+    pub fn reflect(&self, normal: &Tuple) -> Tuple {
         *self - (*normal * 2.0 * self.dot(normal))
     }
 }
@@ -89,7 +89,7 @@ impl PartialEq for Tuple {
 impl Add for Tuple {
     type Output = Tuple;
 
-    fn add(self, other: Tuple) -> Self {
+    fn add(self, other: Tuple) -> Tuple {
         Tuple::new(
             self.x + other.x,
             self.y + other.y,
@@ -102,7 +102,7 @@ impl Add for Tuple {
 impl Sub for Tuple {
     type Output = Tuple;
 
-    fn sub(self, other: Tuple) -> Self {
+    fn sub(self, other: Tuple) -> Tuple {
         Tuple::new(
             self.x - other.x,
             self.y - other.y,
@@ -115,7 +115,7 @@ impl Sub for Tuple {
 impl Neg for Tuple {
     type Output = Tuple;
 
-    fn neg(self) -> Self {
+    fn neg(self) -> Tuple {
         Tuple::new(-self.x, -self.y, -self.z, -self.w)
     }
 }
@@ -123,7 +123,7 @@ impl Neg for Tuple {
 impl Mul<f32> for Tuple {
     type Output = Tuple;
 
-    fn mul(self, scalar: f32) -> Self {
+    fn mul(self, scalar: f32) -> Tuple {
         Tuple::new(
             self.x * scalar,
             self.y * scalar,
@@ -136,7 +136,7 @@ impl Mul<f32> for Tuple {
 impl Mul<Tuple> for Tuple {
     type Output = Tuple;
 
-    fn mul(self, other: Tuple) -> Self {
+    fn mul(self, other: Tuple) -> Tuple {
         Tuple::new(
             self.x * other.x,
             self.y * other.y,
@@ -149,7 +149,7 @@ impl Mul<Tuple> for Tuple {
 impl Div<f32> for Tuple {
     type Output = Tuple;
 
-    fn div(self, scalar: f32) -> Self {
+    fn div(self, scalar: f32) -> Tuple {
         Tuple::new(
             self.x / scalar,
             self.y / scalar,

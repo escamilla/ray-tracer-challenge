@@ -9,15 +9,15 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn new(red: f32, green: f32, blue: f32) -> Self {
+    pub fn new(red: f32, green: f32, blue: f32) -> Color {
         Color { red, green, blue }
     }
 
-    pub fn black() -> Self {
+    pub fn black() -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
 
-    pub fn white() -> Self {
+    pub fn white() -> Color {
         Color::new(1.0, 1.0, 1.0)
     }
 }
@@ -33,7 +33,7 @@ impl PartialEq for Color {
 impl Add for Color {
     type Output = Color;
 
-    fn add(self, other: Color) -> Self {
+    fn add(self, other: Color) -> Color {
         Color::new(
             self.red + other.red,
             self.green + other.green,
@@ -45,7 +45,7 @@ impl Add for Color {
 impl Sub for Color {
     type Output = Color;
 
-    fn sub(self, other: Color) -> Self {
+    fn sub(self, other: Color) -> Color {
         Color::new(
             self.red - other.red,
             self.green - other.green,
@@ -57,7 +57,7 @@ impl Sub for Color {
 impl Mul<f32> for Color {
     type Output = Color;
 
-    fn mul(self, scalar: f32) -> Self {
+    fn mul(self, scalar: f32) -> Color {
         Color::new(self.red * scalar, self.green * scalar, self.blue * scalar)
     }
 }
@@ -65,7 +65,7 @@ impl Mul<f32> for Color {
 impl Mul<Color> for Color {
     type Output = Color;
 
-    fn mul(self, other: Color) -> Self {
+    fn mul(self, other: Color) -> Color {
         Color::new(
             self.red * other.red,
             self.green * other.green,
