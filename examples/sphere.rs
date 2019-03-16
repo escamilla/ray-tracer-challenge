@@ -49,6 +49,7 @@ fn main() {
                     point,
                     eye_vector,
                     normal_vector,
+                    false,
                 );
                 canvas.write_pixel(x, y, color);
             }
