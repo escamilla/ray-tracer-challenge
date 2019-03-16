@@ -43,14 +43,14 @@ impl Canvas {
             values.push(blue);
         }
         let mut line = String::new();
-        for i in 0..values.len() {
-            let value = format!("{}", values[i]);
+        for (i, value) in values.iter().enumerate() {
+            let value = format!("{}", value);
             if line.len() + 1 + value.len() >= PPM_LINE_LENGTH {
                 line.push('\n');
                 ppm.push_str(line.as_str());
                 line = String::new();
             }
-            if line.len() > 0 {
+            if !line.is_empty() {
                 line.push(' ');
             }
             line.push_str(value.as_str());

@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     fn test_lighting_with_the_eye_between_the_light_and_the_surface() {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, 0.0, -1.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);
@@ -109,7 +109,7 @@ mod tests {
     #[test]
     fn test_lighting_with_the_eye_between_light_and_surface_eye_offset_45_degrees(
     ) {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, SQRT_2 / 2.0, -SQRT_2 / 2.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);
@@ -130,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_lighting_with_eye_opposite_surface_light_offset_45_degrees() {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, 0.0, -1.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);
@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn test_lighting_with_eye_in_the_path_of_the_reflection_vector() {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, -SQRT_2 / 2.0, -SQRT_2 / 2.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);
@@ -172,7 +172,7 @@ mod tests {
 
     #[test]
     fn test_lighting_with_the_light_behind_the_surface() {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, 0.0, -1.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);
@@ -193,7 +193,7 @@ mod tests {
 
     #[test]
     fn test_lighting_with_the_surface_in_shadow() {
-        let material = Material::new();
+        let material = Material::default();
         let position = Tuple::point(0.0, 0.0, 0.0);
         let eye_vector = Tuple::vector(0.0, 0.0, -1.0);
         let normal_vector = Tuple::vector(0.0, 0.0, -1.0);

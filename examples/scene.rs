@@ -15,45 +15,45 @@ use std::io::Write;
 use std::path::Path;
 
 fn main() {
-    let mut floor = Sphere::new();
+    let mut floor = Sphere::default();
     floor.transform = Matrix4::scaling(10.0, 0.01, 10.0);
-    floor.material = Material::new();
+    floor.material = Material::default();
     floor.material.color = Color::new(0.9, 0.9, 0.9);
     floor.material.specular = 0.0;
 
-    let mut left_wall = Sphere::new();
+    let mut left_wall = Sphere::default();
     left_wall.transform = Matrix4::translation(0.0, 0.0, 5.0)
         * Matrix4::rotation_y(-FRAC_PI_4)
         * Matrix4::rotation_x(FRAC_PI_2)
         * Matrix4::scaling(10.0, 0.01, 10.0);
     left_wall.material = floor.material;
 
-    let mut right_wall = Sphere::new();
+    let mut right_wall = Sphere::default();
     right_wall.transform = Matrix4::translation(0.0, 0.0, 5.0)
         * Matrix4::rotation_y(FRAC_PI_4)
         * Matrix4::rotation_x(FRAC_PI_2)
         * Matrix4::scaling(10.0, 0.01, 10.0);
     right_wall.material = floor.material;
 
-    let mut middle = Sphere::new();
+    let mut middle = Sphere::default();
     middle.transform = Matrix4::translation(-0.5, 1.0, 0.5);
-    middle.material = Material::new();
+    middle.material = Material::default();
     middle.material.color = Color::new(0.0, 1.0, 0.0);
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
 
-    let mut right = Sphere::new();
+    let mut right = Sphere::default();
     right.transform =
         Matrix4::translation(1.5, 0.5, -0.5) * Matrix4::scaling(0.5, 0.5, 0.5);
-    right.material = Material::new();
+    right.material = Material::default();
     right.material.color = Color::new(0.0, 0.0, 1.0);
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
 
-    let mut left = Sphere::new();
+    let mut left = Sphere::default();
     left.transform = Matrix4::translation(-1.5, 0.33, -0.75)
         * Matrix4::scaling(0.33, 0.33, 0.33);
-    left.material = Material::new();
+    left.material = Material::default();
     left.material.color = Color::new(1.0, 0.0, 0.0);
     left.material.diffuse = 0.7;
     left.material.specular = 0.3;

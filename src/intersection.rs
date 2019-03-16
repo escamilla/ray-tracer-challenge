@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     fn test_an_intersection_encapsulates_t_and_an_object() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i = Intersection::new(3.5, s);
         assert_eq!(i.t, 3.5);
         assert_eq!(i.object, s);
@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn test_aggregating_intersections() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i1 = Intersection::new(1.0, s);
         let i2 = Intersection::new(2.0, s);
         let intersections = vec![i1, i2];
@@ -122,7 +122,7 @@ mod tests {
             Tuple::point(0.0, 0.0, -5.0),
             Tuple::vector(0.0, 0.0, 1.0),
         );
-        let s = Sphere::new();
+        let s = Sphere::default();
         let xs = s.intersect(r);
         assert_eq!(xs.len(), 2);
         assert_eq!(xs[0].object, s);
@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn test_the_hit_when_all_intersections_have_positive_t() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i1 = Intersection::new(1.0, s);
         let i2 = Intersection::new(2.0, s);
         let xs = vec![i2, i1];
@@ -142,7 +142,7 @@ mod tests {
 
     #[test]
     fn test_the_hit_when_some_intersections_have_negative_t() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i1 = Intersection::new(-1.0, s);
         let i2 = Intersection::new(1.0, s);
         let xs = vec![i2, i1];
@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn test_the_hit_when_all_intersections_have_negative_t() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i1 = Intersection::new(-2.0, s);
         let i2 = Intersection::new(-1.0, s);
         let xs = vec![i2, i1];
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     fn test_the_hit_is_always_the_lowest_nonnegative_intersection() {
-        let s = Sphere::new();
+        let s = Sphere::default();
         let i1 = Intersection::new(5.0, s);
         let i2 = Intersection::new(7.0, s);
         let i3 = Intersection::new(-3.0, s);
@@ -180,7 +180,7 @@ mod tests {
             Tuple::point(0.0, 0.0, -5.0),
             Tuple::vector(0.0, 0.0, 1.0),
         );
-        let shape = Sphere::new();
+        let shape = Sphere::default();
         let mut i = find_hit(shape.intersect(r)).unwrap();
         i.prepare_hit(r);
         assert_eq!(i.object, i.object);
@@ -195,7 +195,7 @@ mod tests {
             Tuple::point(0.0, 0.0, -5.0),
             Tuple::vector(0.0, 0.0, 1.0),
         );
-        let shape = Sphere::new();
+        let shape = Sphere::default();
         let mut i = find_hit(shape.intersect(r)).unwrap();
         i.prepare_hit(r);
         assert_eq!(i.inside, Some(false));
@@ -205,7 +205,7 @@ mod tests {
     fn test_the_hit_when_an_intersection_occurs_on_the_inside() {
         let r =
             Ray::new(Tuple::point(0.0, 0.0, 0.0), Tuple::vector(0.0, 0.0, 1.0));
-        let shape = Sphere::new();
+        let shape = Sphere::default();
         let mut i = find_hit(shape.intersect(r)).unwrap();
         i.prepare_hit(r);
         assert_eq!(i.point, Some(Tuple::point(0.0, 0.0, 1.0)));
@@ -235,7 +235,7 @@ mod tests {
             Tuple::point(0.0, 0.0, -5.0),
             Tuple::vector(0.0, 0.0, 1.0),
         );
-        let mut shape = Sphere::new();
+        let mut shape = Sphere::default();
         shape.transform = Matrix4::translation(0.0, 0.0, 1.0);
         let mut i = Intersection::new(5.0, shape);
         i.prepare_hit(r);

@@ -19,24 +19,6 @@ impl World {
         }
     }
 
-    pub fn default() -> World {
-        let light =
-            PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
-
-        let mut s1 = Sphere::new();
-        s1.material.color = Color::new(0.8, 1.0, 0.6);
-        s1.material.diffuse = 0.7;
-        s1.material.specular = 0.2;
-
-        let mut s2 = Sphere::new();
-        s2.transform = Matrix4::scaling(0.5, 0.5, 0.5);
-
-        World {
-            light: Some(light),
-            objects: vec![s1, s2],
-        }
-    }
-
     pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
         let mut intersections = Vec::new();
         for object in &self.objects {
@@ -69,6 +51,26 @@ impl World {
     }
 }
 
+impl Default for World {
+    fn default() -> World {
+        let light =
+            PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
+
+        let mut s1 = Sphere::default();
+        s1.material.color = Color::new(0.8, 1.0, 0.6);
+        s1.material.diffuse = 0.7;
+        s1.material.specular = 0.2;
+
+        let mut s2 = Sphere::default();
+        s2.transform = Matrix4::scaling(0.5, 0.5, 0.5);
+
+        World {
+            light: Some(light),
+            objects: vec![s1, s2],
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::color::Color;
@@ -91,11 +93,11 @@ mod tests {
     fn test_the_default_world() {
         let light =
             PointLight::new(Tuple::point(-10.0, 10.0, -10.0), Color::white());
-        let mut s1 = Sphere::new();
+        let mut s1 = Sphere::default();
         s1.material.color = Color::new(0.8, 1.0, 0.6);
         s1.material.diffuse = 0.7;
         s1.material.specular = 0.2;
-        let mut s2 = Sphere::new();
+        let mut s2 = Sphere::default();
         s2.transform = Matrix4::scaling(0.5, 0.5, 0.5);
         let w = World::default();
         assert!(w.light.is_some());
@@ -191,8 +193,8 @@ mod tests {
             Tuple::point(0.0, 0.0, -10.0),
             Color::white(),
         ));
-        let s1 = Sphere::new();
-        let mut s2 = Sphere::new();
+        let s1 = Sphere::default();
+        let mut s2 = Sphere::default();
         s2.transform = Matrix4::translation(0.0, 0.0, 10.0);
         world.objects = vec![s1, s2];
         let r =

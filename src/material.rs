@@ -9,8 +9,8 @@ pub struct Material {
     pub color: Color,
 }
 
-impl Material {
-    pub fn new() -> Material {
+impl Default for Material {
+    fn default() -> Material {
         Material {
             ambient: 0.1,
             diffuse: 0.9,
@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn test_the_default_material() {
-        let m = Material::new();
+        let m = Material::default();
         assert_eq!(m.ambient, 0.1);
         assert_eq!(m.diffuse, 0.9);
         assert_eq!(m.specular, 0.9);

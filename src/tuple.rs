@@ -1,3 +1,4 @@
+#![allow(clippy::float_cmp)]
 use crate::equal_f32;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 

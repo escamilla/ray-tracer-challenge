@@ -19,7 +19,7 @@ fn main() {
     let pixel_size = wall_size / (canvas_size as f32);
     let mut canvas = Canvas::new(canvas_size, canvas_size);
 
-    let mut sphere = Sphere::new();
+    let mut sphere = Sphere::default();
     sphere.material.color = Color::new(1.0, 0.0, 1.0);
 
     let light_position = Tuple::point(-10.0, 10.0, -10.0);
