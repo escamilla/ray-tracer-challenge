@@ -66,81 +66,87 @@ impl Canvas {
     }
 }
 
-#[test]
-fn test_creating_a_canvas() {
-    let c = Canvas::new(10, 20);
-    assert_eq!(c.width, 10);
-    assert_eq!(c.height, 20);
-    for pixel in c.pixels {
-        assert_eq!(pixel, Color::black());
-    }
-}
+#[cfg(test)]
+mod tests {
+    use crate::canvas::Canvas;
+    use crate::color::Color;
 
-#[test]
-fn test_writing_pixels_to_a_canvas() {
-    let mut c = Canvas::new(10, 20);
-    let red = Color::new(1.0, 0.0, 0.0);
-    c.write_pixel(2, 3, red);
-    assert_eq!(c.pixel_at(2, 3), red);
-}
-
-#[test]
-fn test_constructing_the_ppm_header() {
-    let c = Canvas::new(5, 3);
-    let ppm = c.to_ppm();
-    let mut lines = ppm.lines();
-    assert_eq!(Some("P3"), lines.next());
-    assert_eq!(Some("5 3"), lines.next());
-    assert_eq!(Some("255"), lines.next());
-}
-
-#[test]
-fn test_constructing_the_ppm_pixel_data() {
-    let mut c = Canvas::new(5, 3);
-    let c1 = Color::new(1.5, 0.0, 0.0);
-    let c2 = Color::new(0.0, 0.5, 0.0);
-    let c3 = Color::new(-0.5, 0.0, 1.0);
-    c.write_pixel(0, 0, c1);
-    c.write_pixel(2, 1, c2);
-    c.write_pixel(4, 2, c3);
-    let ppm = c.to_ppm();
-    let mut lines = ppm.lines().skip(3);
-    assert_eq!(Some("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0"), lines.next());
-    assert_eq!(Some("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0"), lines.next());
-    assert_eq!(Some("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"), lines.next());
-}
-
-#[test]
-fn test_splitting_long_lines_in_ppm_files() {
-    let mut c = Canvas::new(10, 2);
-    for y in 0..c.height {
-        for x in 0..c.width {
-            c.write_pixel(x, y, Color::new(1.0, 0.8, 0.6));
+    #[test]
+    fn test_creating_a_canvas() {
+        let c = Canvas::new(10, 20);
+        assert_eq!(c.width, 10);
+        assert_eq!(c.height, 20);
+        for pixel in c.pixels {
+            assert_eq!(pixel, Color::black());
         }
     }
-    let ppm = c.to_ppm();
-    let mut lines = ppm.lines().skip(3);
-    assert_eq!(
-        Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"),
-        lines.next()
-    );
-    assert_eq!(
-        Some("153 255 204 153 255 204 153 255 204 153 255 204 153"),
-        lines.next()
-    );
-    assert_eq!(
-        Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"),
-        lines.next()
-    );
-    assert_eq!(
-        Some("153 255 204 153 255 204 153 255 204 153 255 204 153"),
-        lines.next()
-    );
-}
 
-#[test]
-fn test_ppm_files_are_terminated_by_a_newline_character() {
-    let c = Canvas::new(5, 3);
-    let ppm = c.to_ppm();
-    assert!(ppm.ends_with('\n'));
+    #[test]
+    fn test_writing_pixels_to_a_canvas() {
+        let mut c = Canvas::new(10, 20);
+        let red = Color::new(1.0, 0.0, 0.0);
+        c.write_pixel(2, 3, red);
+        assert_eq!(c.pixel_at(2, 3), red);
+    }
+
+    #[test]
+    fn test_constructing_the_ppm_header() {
+        let c = Canvas::new(5, 3);
+        let ppm = c.to_ppm();
+        let mut lines = ppm.lines();
+        assert_eq!(Some("P3"), lines.next());
+        assert_eq!(Some("5 3"), lines.next());
+        assert_eq!(Some("255"), lines.next());
+    }
+
+    #[test]
+    fn test_constructing_the_ppm_pixel_data() {
+        let mut c = Canvas::new(5, 3);
+        let c1 = Color::new(1.5, 0.0, 0.0);
+        let c2 = Color::new(0.0, 0.5, 0.0);
+        let c3 = Color::new(-0.5, 0.0, 1.0);
+        c.write_pixel(0, 0, c1);
+        c.write_pixel(2, 1, c2);
+        c.write_pixel(4, 2, c3);
+        let ppm = c.to_ppm();
+        let mut lines = ppm.lines().skip(3);
+        assert_eq!(Some("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0"), lines.next());
+        assert_eq!(Some("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0"), lines.next());
+        assert_eq!(Some("0 0 0 0 0 0 0 0 0 0 0 0 0 0 255"), lines.next());
+    }
+
+    #[test]
+    fn test_splitting_long_lines_in_ppm_files() {
+        let mut c = Canvas::new(10, 2);
+        for y in 0..c.height {
+            for x in 0..c.width {
+                c.write_pixel(x, y, Color::new(1.0, 0.8, 0.6));
+            }
+        }
+        let ppm = c.to_ppm();
+        let mut lines = ppm.lines().skip(3);
+        assert_eq!(
+        Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"),
+        lines.next()
+    );
+        assert_eq!(
+            Some("153 255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
+        assert_eq!(
+        Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204"),
+        lines.next()
+    );
+        assert_eq!(
+            Some("153 255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
+    }
+
+    #[test]
+    fn test_ppm_files_are_terminated_by_a_newline_character() {
+        let c = Canvas::new(5, 3);
+        let ppm = c.to_ppm();
+        assert!(ppm.ends_with('\n'));
+    }
 }

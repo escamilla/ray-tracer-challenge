@@ -17,6 +17,7 @@ fn equal_f32(a: f32, b: f32) -> bool {
 }
 
 fn clamp_i32(num: i32, min: i32, max: i32) -> i32 {
+    assert!(min < max);
     if num < min {
         min
     } else if num > max {

@@ -21,11 +21,16 @@ impl Material {
     }
 }
 
-#[test]
-fn test_the_default_material() {
-    let m = Material::new();
-    assert_eq!(m.ambient, 0.1);
-    assert_eq!(m.diffuse, 0.9);
-    assert_eq!(m.specular, 0.9);
-    assert_eq!(m.shininess, 200.0);
+#[cfg(test)]
+mod tests {
+    use crate::material::Material;
+
+    #[test]
+    fn test_the_default_material() {
+        let m = Material::new();
+        assert_eq!(m.ambient, 0.1);
+        assert_eq!(m.diffuse, 0.9);
+        assert_eq!(m.specular, 0.9);
+        assert_eq!(m.shininess, 200.0);
+    }
 }
