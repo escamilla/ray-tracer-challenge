@@ -35,16 +35,20 @@ impl Camera {
         }
     }
 
-    pub fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
+    fn ray_for_pixel(
+        &self,
+        inverse_transform: Matrix4,
+        origin: Tuple,
+        px: usize,
+        py: usize,
+    ) -> Ray {
         let x_offset = ((px as f32) + 0.5) * self.pixel_size;
         let y_offset = ((py as f32) + 0.5) * self.pixel_size;
 
         let world_x = self.half_width - x_offset;
         let world_y = self.half_height - y_offset;
 
-        let pixel =
-            self.transform.inverse() * Tuple::point(world_x, world_y, -1.0);
-        let origin = self.transform.inverse() * Tuple::point(0.0, 0.0, 0.0);
+        let pixel = inverse_transform * Tuple::point(world_x, world_y, -1.0);
         let direction = (pixel - origin).normalize();
 
         Ray::new(origin, direction)
@@ -52,9 +56,13 @@ impl Camera {
 
     pub fn render(&self, world: World) -> Canvas {
         let mut canvas = Canvas::new(self.hsize, self.vsize);
-        for x in 0..self.hsize {
-            for y in 0..self.vsize {
-                let ray = self.ray_for_pixel(x, y);
+
+        let inverse_transform = self.transform.inverse();
+        let origin = inverse_transform * Tuple::point(0.0, 0.0, 0.0);
+
+        for y in 0..self.vsize {
+            for x in 0..self.hsize {
+                let ray = self.ray_for_pixel(inverse_transform, origin, x, y);
                 let color = world.color_at(ray);
                 canvas.write_pixel(x, y, color);
             }
@@ -99,7 +107,9 @@ mod tests {
     #[test]
     fn test_constructing_a_ray_through_the_center_of_the_canvas() {
         let c = Camera::new(201, 101, FRAC_PI_2);
-        let r = c.ray_for_pixel(100, 50);
+        let inverse_transform = c.transform.inverse();
+        let origin = inverse_transform * Tuple::point(0.0, 0.0, 0.0);
+        let r = c.ray_for_pixel(inverse_transform, origin, 100, 50);
         assert_eq!(r.origin, Tuple::point(0.0, 0.0, 0.0));
         assert_eq!(r.direction, Tuple::vector(0.0, 0.0, -1.0));
     }
@@ -107,7 +117,9 @@ mod tests {
     #[test]
     fn test_constructing_a_ray_through_a_corner_of_the_canvas() {
         let c = Camera::new(201, 101, FRAC_PI_2);
-        let r = c.ray_for_pixel(0, 0);
+        let inverse_transform = c.transform.inverse();
+        let origin = inverse_transform * Tuple::point(0.0, 0.0, 0.0);
+        let r = c.ray_for_pixel(c.transform.inverse(), origin, 0, 0);
         assert_eq!(r.origin, Tuple::point(0.0, 0.0, 0.0));
         assert_eq!(r.direction, Tuple::vector(0.66519, 0.33259, -0.66851));
     }
@@ -117,7 +129,9 @@ mod tests {
         let mut c = Camera::new(201, 101, FRAC_PI_2);
         c.transform = Matrix4::rotation_y(FRAC_PI_4)
             * Matrix4::translation(0.0, -2.0, 5.0);
-        let r = c.ray_for_pixel(100, 50);
+        let inverse_transform = c.transform.inverse();
+        let origin = inverse_transform * Tuple::point(0.0, 0.0, 0.0);
+        let r = c.ray_for_pixel(inverse_transform, origin, 100, 50);
         assert_eq!(r.origin, Tuple::point(0.0, 2.0, -5.0));
         assert_eq!(
             r.direction,
