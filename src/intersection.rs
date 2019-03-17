@@ -4,7 +4,6 @@ use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::tuple::Tuple;
 use crate::world::World;
-use crate::EPSILON;
 use std::cmp::Ordering;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -42,7 +41,7 @@ impl Intersection {
         } else {
             inside = false;
         }
-        let over_point = point + (normal_vector * EPSILON);
+        let over_point = point + (normal_vector * 0.01);
         self.point = Some(point);
         self.eye_vector = Some(eye_vector);
         self.normal_vector = Some(normal_vector);
