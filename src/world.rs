@@ -20,12 +20,10 @@ impl World {
     }
 
     pub fn intersect(&self, ray: Ray) -> Vec<Intersection> {
-        let mut intersections = Vec::new();
-        for object in &self.objects {
-            intersections.extend(object.intersect(ray));
-        }
-        intersections.sort();
-        intersections
+        self.objects
+            .iter()
+            .flat_map(|object| object.intersect(ray))
+            .collect()
     }
 
     pub fn color_at(&self, ray: Ray) -> Color {
@@ -113,7 +111,8 @@ mod tests {
             Tuple::point(0.0, 0.0, -5.0),
             Tuple::vector(0.0, 0.0, 1.0),
         );
-        let xs = w.intersect(r);
+        let mut xs = w.intersect(r);
+        xs.sort();
         assert_eq!(xs.len(), 4);
         assert_eq!(xs[0].t, 4.0);
         assert_eq!(xs[1].t, 4.5);
